@@ -6,8 +6,9 @@ import java.time.Instant;
 import javax.imageio.ImageIO;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.MouseInputListener;
 
-public class App implements KeyListener {
+public class App extends Frame implements KeyListener, MouseInputListener {
     static int x = 0;
     static int y = 0;
     static int speed = 5;
@@ -17,9 +18,14 @@ public class App implements KeyListener {
     // find better way
     static JFrame frame = new JFrame("Loot Goblin");
     static JPanel panel = new JPanel(new BorderLayout());
-    static GridLayout invLayout = new GridLayout(16, 16);
-    static JPanel inventory = new JPanel(invLayout); // i doht care, its a game
+    static JPanel menuInventory = new JPanel(null/*new BorderLayout()*/); // i doht care, its a game
     static boolean isOpen = false;
+    static boolean isIn = false;
+    static int[][] inventory = new int[16][16]; // lookup table might be easier
+    static int WHAT = 32; // the y starts this much early, but doesnt say, unless you click, im gussing y cnts bar
+    static int itemHeld = 0;
+
+    static JLabel menuItemHeld = new JLabel();
     
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
@@ -38,24 +44,18 @@ public class App implements KeyListener {
 
         App k = new App();
 		frame.addKeyListener(k);
-
-        JPanel[] itemPanels = new JPanel[16*16];
-        for (int i=0; i<16; i++) {
-            for (int j=0; j<16; j++) {
-                //JLabel itemBackplate = new JLabel(new ImageIcon(ImageIO.read(new File("res/itemBackplate.png"))));
-                itemPanels[i*j] = new JPanel();
-                //itemPanels[i*j].setLocation(i*16, j*16);
-                //itemPanels[i*j].add(itemBackplate); // background colors dont work, but this does
-                inventory.add(itemPanels[i*j]);
-            }
-        }
+        frame.addMouseListener(k);
+        frame.addMouseMotionListener(k); // annoying as hell
         
-        inventory.setLocation(300, 100); // this must be before panel is added
-        invLayout.setHgap(1);
-        invLayout.setVgap(1);
-        inventory.setSize(700, 500);
-        inventory.setBackground(Color.LIGHT_GRAY);
-        panel.add(inventory);
+        menuInventory.setLocation(300, 100); // this must be before panel is added
+        JLabel invBackplate = new JLabel(new ImageIcon(ImageIO.read(new File("res/invBackplate.png"))));
+        menuItemHeld.setVisible(false);
+        menuItemHeld.setSize(32, 32);
+        menuInventory.add(invBackplate/*, BorderLayout.WEST*/);
+        menuInventory.add(menuItemHeld);
+        menuInventory.setSize(700, 512);
+        menuInventory.setBackground(Color.LIGHT_GRAY);
+        panel.add(menuInventory);
 
         panel.setBackground(Color.GREEN); // if opaque, no color
 
@@ -69,13 +69,19 @@ public class App implements KeyListener {
         frame.pack();
         //5. Show it.
         frame.setVisible(true);
-        inventory.setVisible(false);
+        menuInventory.setVisible(false);
+
+        for (int i=0; i<16; i++)
+            for (int j=0; j<16; j++)
+                inventory[i][j] = (i+j*16)+1; // creates a unique number for each, just memeing
+                // +1 because 0 is gimmick item, to be NULL
 
         Instant now = Instant.now();
         while (true) {
             now = tick(now); // super cleaver !?
             picLabel.setLocation(x, y);
             frame.repaint();
+            invRedraw();
         }
     }
 
@@ -91,6 +97,10 @@ public class App implements KeyListener {
         return nowNew;
     }
 
+    public static void invRedraw() {
+
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
         System.out.println("key typed: " + e.getKeyChar());
@@ -99,14 +109,16 @@ public class App implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         System.out.println("key pressed: " + e.getKeyChar());
-             if (e.getKeyChar() == 'w') // up (symmetric :P)
-            velocityY = -speed;
-        else if (e.getKeyChar() == 's') // down
-            velocityY = speed;
-        else if (e.getKeyChar() == 'a') // left
-            velocityX = -speed;
-        else if (e.getKeyChar() == 'd') // right
-            velocityX = speed;
+        if (!isOpen) { // move if not in inventory (maybe find better way)
+                 if (e.getKeyChar() == 'w') // up (symmetric :P)
+                velocityY = -speed;
+            else if (e.getKeyChar() == 's') // down
+                velocityY = speed;
+            else if (e.getKeyChar() == 'a') // left
+                velocityX = -speed;
+            else if (e.getKeyChar() == 'd') // right
+                velocityX = speed;
+        }
     }
 
     @Override
@@ -123,11 +135,70 @@ public class App implements KeyListener {
         else if (e.getKeyChar() == 'f') // pickup
             System.out.println("PICKUP");
         else if (e.getKeyChar() == 'e') // inventory
-            openInventory();
+            toggleInventory();
     }
 
-    public static void openInventory() {
+    public static void toggleInventory() {
         isOpen = !isOpen; // smart, thank you
-        inventory.setVisible(isOpen);
+        menuInventory.setVisible(isOpen);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        System.out.println("mouse clicked: " + e.getPoint());
+        int x = e.getX(); // i think this is more efficient
+        int y = e.getY()-WHAT; // deal with whatever that is
+        // im clever, this will get the item place in inv, seems convoluded though
+        int invX = ((x-((x-300)%32))-300)/32; // super confusing, must write down
+        int invY = ((y-((y-100)%32))-100)/32; // divison, duh
+        // check if in inventory
+        if (isOpen && x > 300 && x < 1000 && y > 100 && y < 612) {
+            System.out.println("item @ (" + invX + "," + invY + "): " + inventory[invX][invY]);
+            int tmp = inventory[invX][invY]; // honestly i guessed, and got the buffer right
+            inventory[invX][invY] = itemHeld;
+            itemHeld = tmp;
+            menuItemHeld.setText(String.valueOf(itemHeld));
+            if (itemHeld == 0) { // if buffer is null
+                menuItemHeld.setVisible(false);
+            } else {
+                menuItemHeld.setVisible(true);
+                System.out.println(itemHeld);
+            }
+
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        System.out.println("mouse pressed" + e.getPoint());
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        System.out.println("mouse Released");
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        System.out.println("mouse entered");
+        isIn = true; // maybe but how to get start
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        System.out.println("mouse exited");
+        isIn = false;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        //System.out.println("mouse dragged");
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        //System.out.println("mouse moved"); // annoying
+        if (itemHeld != 0)
+            menuItemHeld.setLocation(e.getPoint());
     }
 }
