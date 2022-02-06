@@ -18,7 +18,7 @@ public class App extends Frame implements KeyListener, MouseInputListener {
     // find better way
     static JFrame frame = new JFrame("Loot Goblin");
     static JPanel panel = new JPanel(new BorderLayout());
-    static JPanel menuInventory = new JPanel(null/*new BorderLayout()*/); // i doht care, its a game
+    static JLayeredPane menuInventory = new JLayeredPane(/*new BorderLayout()*/); // i doht care, its a game
     static boolean isOpen = false;
     static boolean isIn = false;
     static int[][] inventory = new int[16][16]; // lookup table might be easier
@@ -26,6 +26,7 @@ public class App extends Frame implements KeyListener, MouseInputListener {
     static int itemHeld = 0;
 
     static JLabel menuItemHeld = new JLabel();
+    static JLabel[][] menuInvItems = new JLabel[16][16];
     
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
@@ -48,13 +49,22 @@ public class App extends Frame implements KeyListener, MouseInputListener {
         frame.addMouseMotionListener(k); // annoying as hell
         
         menuInventory.setLocation(300, 100); // this must be before panel is added
+        menuInventory.setLayout(null); // have to set it here
         JLabel invBackplate = new JLabel(new ImageIcon(ImageIO.read(new File("res/invBackplate.png"))));
+        invBackplate.setBounds(0,0,512,512); // i hate swing
+        for (int i=0; i<16; i++)
+            for(int j=0; j<16; j++) { // maybe move eslewhere
+                menuInvItems[i][j] = new JLabel(String.valueOf((i+j*16)+1));
+                menuInvItems[i][j].setBounds(32*i, 32*j, 32, 32);
+                menuInventory.add(menuInvItems[i][j], 2, 0);
+            }
         menuItemHeld.setVisible(false);
         menuItemHeld.setSize(32, 32);
-        menuInventory.add(invBackplate/*, BorderLayout.WEST*/);
-        menuInventory.add(menuItemHeld);
+        menuInventory.add(invBackplate, 1, 0/*, BorderLayout.WEST*/);
+        menuInventory.add(menuItemHeld, 3, 0);
         menuInventory.setSize(700, 512);
         menuInventory.setBackground(Color.LIGHT_GRAY);
+        menuInventory.setOpaque(true);
         panel.add(menuInventory);
 
         panel.setBackground(Color.GREEN); // if opaque, no color
@@ -164,7 +174,11 @@ public class App extends Frame implements KeyListener, MouseInputListener {
                 menuItemHeld.setVisible(true);
                 System.out.println(itemHeld);
             }
-
+            // update ui, only update one taht is changed, smarte
+            if (inventory[invX][invY] != 0 && inventory[invX][invY] != itemHeld) // still feel i can do smarter
+                menuInvItems[invX][invY].setText(String.valueOf(inventory[invX][invY]/*.getSprite()*/));
+            else
+                menuInvItems[invX][invY].setText("");
         }
     }
 
@@ -199,6 +213,6 @@ public class App extends Frame implements KeyListener, MouseInputListener {
     public void mouseMoved(MouseEvent e) {
         //System.out.println("mouse moved"); // annoying
         if (itemHeld != 0)
-            menuItemHeld.setLocation(e.getPoint());
+            menuItemHeld.setLocation(e.getX()-300, e.getY()-100);
     }
 }
