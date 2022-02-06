@@ -27,6 +27,8 @@ public class App extends Frame implements KeyListener, MouseInputListener {
 
     static JLabel menuItemHeld = new JLabel();
     static JLabel[][] menuInvItems = new JLabel[16][16];
+    static int[][] invIndexMap; // inventory
+    static int[] invItems; // items list
     
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
@@ -158,11 +160,12 @@ public class App extends Frame implements KeyListener, MouseInputListener {
         System.out.println("mouse clicked: " + e.getPoint());
         int x = e.getX(); // i think this is more efficient
         int y = e.getY()-WHAT; // deal with whatever that is
-        // im clever, this will get the item place in inv, seems convoluded though
-        int invX = ((x-((x-300)%32))-300)/32; // super confusing, must write down
-        int invY = ((y-((y-100)%32))-100)/32; // divison, duh
         // check if in inventory
         if (isOpen && x > 300 && x < 1000 && y > 100 && y < 612) {
+            // im clever, this will get the item place in inv, seems convoluded though
+            int invX = ((x-((x-300)%32))-300)/32; // super confusing, must write down
+            int invY = ((y-((y-100)%32))-100)/32; // divison, duh
+
             System.out.println("item @ (" + invX + "," + invY + "): " + inventory[invX][invY]);
             int tmp = inventory[invX][invY]; // honestly i guessed, and got the buffer right
             inventory[invX][invY] = itemHeld;
@@ -179,6 +182,8 @@ public class App extends Frame implements KeyListener, MouseInputListener {
                 menuInvItems[invX][invY].setText(String.valueOf(inventory[invX][invY]/*.getSprite()*/));
             else
                 menuInvItems[invX][invY].setText("");
+        } else { // maybe this way, will fire if inv open and outside space, but might be fine
+
         }
     }
 
