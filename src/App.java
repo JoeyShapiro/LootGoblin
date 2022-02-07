@@ -52,7 +52,7 @@ public class App extends Frame implements KeyListener, MouseInputListener {
         invBackplate.setBounds(0,0,512,512); // i hate swing
         for (int i=0; i<16; i++)
             for(int j=0; j<16; j++) { // maybe move eslewhere
-                menuInvItems[i][j] = new JLabel(String.valueOf(inventory.indexMap[i][j]));
+                menuInvItems[i][j] = new JLabel(String.valueOf(inventory.getItem(i, j)));
                 menuInvItems[i][j].setBounds(32*i, 32*j, 32, 32);
                 menuInventory.add(menuInvItems[i][j], 2, 0);
             }
@@ -159,7 +159,9 @@ public class App extends Frame implements KeyListener, MouseInputListener {
         // check if in inventory
         if (isOpen && x > 300 && x < 1000 && y > 100 && y < 612) {
             // im clever, this will get the item place in inv, seems convoluded though
-            inventory.swapItem(x, y);
+            int invX = inventory.getInvX(x); // super confusing, must write down
+            int invY = inventory.getInvY(y); // divison, duh
+            inventory.swapItem(invX, invY);
             menuItemHeld.setText(String.valueOf(inventory.intheld));
             if (inventory.intheld == 0) { // if buffer is null
                 menuItemHeld.setVisible(false);
@@ -168,10 +170,8 @@ public class App extends Frame implements KeyListener, MouseInputListener {
                 System.out.println(inventory.intheld);
             }
             // update ui, only update one taht is changed, smarte
-            int invX = ((x-((x-300)%32))-300)/32; // super confusing, must write down
-            int invY = ((y-((y-100)%32))-100)/32; // divison, duh
-            if (inventory.getItem(x, y) != 0 && inventory.getItem(x, y) != inventory.intheld) // still feel i can do smarter
-                menuInvItems[invX][invY].setText(String.valueOf(inventory.getItem(x, y)/*.getSprite()*/));
+            if (inventory.getItem(invX, invY) != 0 && inventory.getItem(invX, invY) != inventory.intheld) // still feel i can do smarter
+                menuInvItems[invX][invY].setText(String.valueOf(inventory.getItem(invX, invY)/*.getSprite()*/));
             else
                 menuInvItems[invX][invY].setText("");
         } else { // maybe this way, will fire if inv open and outside space, but might be fine

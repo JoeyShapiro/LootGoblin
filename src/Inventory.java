@@ -15,19 +15,15 @@ public class Inventory {
                 indexMap[i][j] = (i+j*16)+1;
     }
 
-    public int getItem(int x, int y) {
-        int invX = ((x-((x-300)%32))-300)/32; // super confusing, must write down
-        int invY = ((y-((y-100)%32))-100)/32; // divison, duh
+    public int getItem(int invX, int invY) {
 
         int index = indexMap[invX][invY];
 
         return index;
     }
 
-    public void swapItem(int x, int y) {
+    public void swapItem(int invX, int invY) {
         // im clever, this will get the item place in inv, seems convoluded though
-        int invX = ((x-((x-300)%32))-300)/32; // maybe move elsewhere, this isnt inv its ui
-        int invY = ((y-((y-100)%32))-100)/32; 
         int index = indexMap[invX][invY];
 
         System.out.println("item @ (" + invX + "," + invY + "): " + items[index]);
@@ -39,5 +35,7 @@ public class Inventory {
         intheld = tmp;
     }
 
-    public int getInvX(int x) { return ((x-((x-300)%32))-300)/32; }
+    // here for now
+    public int getInvX(int x) { return ((x-((x-300)%32))-300)/32; } // super confusing, must write down
+    public int getInvY(int y) { return ((y-((y-100)%32))-100)/32; } // divison, duh
 }
