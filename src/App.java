@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.Instant;
 
@@ -27,8 +26,6 @@ public class App extends Frame implements KeyListener, MouseInputListener {
 
     static JLabel menuItemHeld = new JLabel();
     static JLabel[][] menuInvItems = new JLabel[16][16];
-    static int[][] invIndexMap; // inventory
-    static int[] invItems; // items list
     
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
@@ -72,8 +69,8 @@ public class App extends Frame implements KeyListener, MouseInputListener {
         panel.setBackground(Color.GREEN); // if opaque, no color
 
         frame.add(panel);
-        BufferedImage myPicture = ImageIO.read(new File("res/player.png"));
-        JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+        Player player = new Player(0, 0, 5, ImageIO.read(new File("res/player.png")));
+        JLabel picLabel = new JLabel(new ImageIcon(player.getSprite()));
         panel.add(picLabel);
 
 
