@@ -20,12 +20,11 @@ public class App extends Frame implements KeyListener, MouseInputListener {
     static JLayeredPane menuInventory = new JLayeredPane(/*new BorderLayout()*/); // i doht care, its a game
     static boolean isOpen = false;
     static boolean isIn = false;
-    static int[][] inventory = new int[16][16]; // lookup table might be easier
     static int WHAT = 32; // the y starts this much early, but doesnt say, unless you click, im gussing y cnts bar
-    static int itemHeld = 0;
 
     static JLabel menuItemHeld = new JLabel();
     static JLabel[][] menuInvItems = new JLabel[16][16];
+    static Inventory inventory = new Inventory(16, 16);
     
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
@@ -53,7 +52,7 @@ public class App extends Frame implements KeyListener, MouseInputListener {
         invBackplate.setBounds(0,0,512,512); // i hate swing
         for (int i=0; i<16; i++)
             for(int j=0; j<16; j++) { // maybe move eslewhere
-                menuInvItems[i][j] = new JLabel(String.valueOf((i+j*16)+1));
+                menuInvItems[i][j] = new JLabel(String.valueOf(inventory.indexMap[i][j]));
                 menuInvItems[i][j].setBounds(32*i, 32*j, 32, 32);
                 menuInventory.add(menuInvItems[i][j], 2, 0);
             }
@@ -80,10 +79,10 @@ public class App extends Frame implements KeyListener, MouseInputListener {
         frame.setVisible(true);
         menuInventory.setVisible(false);
 
-        for (int i=0; i<16; i++)
-            for (int j=0; j<16; j++)
-                inventory[i][j] = (i+j*16)+1; // creates a unique number for each, just memeing
-                // +1 because 0 is gimmick item, to be NULL
+        // for (int i=0; i<16; i++)
+        //     for (int j=0; j<16; j++)
+        //         inventory[i][j] = (i+j*16)+1; // creates a unique number for each, just memeing
+        //         // +1 because 0 is gimmick item, to be NULL
 
         Instant now = Instant.now();
         while (true) {
@@ -160,23 +159,19 @@ public class App extends Frame implements KeyListener, MouseInputListener {
         // check if in inventory
         if (isOpen && x > 300 && x < 1000 && y > 100 && y < 612) {
             // im clever, this will get the item place in inv, seems convoluded though
-            int invX = ((x-((x-300)%32))-300)/32; // super confusing, must write down
-            int invY = ((y-((y-100)%32))-100)/32; // divison, duh
-
-            System.out.println("item @ (" + invX + "," + invY + "): " + inventory[invX][invY]);
-            int tmp = inventory[invX][invY]; // honestly i guessed, and got the buffer right
-            inventory[invX][invY] = itemHeld;
-            itemHeld = tmp;
-            menuItemHeld.setText(String.valueOf(itemHeld));
-            if (itemHeld == 0) { // if buffer is null
+            inventory.swapItem(x, y);
+            menuItemHeld.setText(String.valueOf(inventory.intheld));
+            if (inventory.intheld == 0) { // if buffer is null
                 menuItemHeld.setVisible(false);
             } else {
                 menuItemHeld.setVisible(true);
-                System.out.println(itemHeld);
+                System.out.println(inventory.intheld);
             }
             // update ui, only update one taht is changed, smarte
-            if (inventory[invX][invY] != 0 && inventory[invX][invY] != itemHeld) // still feel i can do smarter
-                menuInvItems[invX][invY].setText(String.valueOf(inventory[invX][invY]/*.getSprite()*/));
+            int invX = ((x-((x-300)%32))-300)/32; // super confusing, must write down
+            int invY = ((y-((y-100)%32))-100)/32; // divison, duh
+            if (inventory.getItem(x, y) != 0 && inventory.getItem(x, y) != inventory.intheld) // still feel i can do smarter
+                menuInvItems[invX][invY].setText(String.valueOf(inventory.getItem(x, y)/*.getSprite()*/));
             else
                 menuInvItems[invX][invY].setText("");
         } else { // maybe this way, will fire if inv open and outside space, but might be fine
@@ -214,7 +209,7 @@ public class App extends Frame implements KeyListener, MouseInputListener {
     @Override
     public void mouseMoved(MouseEvent e) {
         //System.out.println("mouse moved"); // annoying
-        if (itemHeld != 0)
+        if (inventory.intheld != 0)
             menuItemHeld.setLocation(e.getX()-300, e.getY()-100);
     }
 }
