@@ -31,7 +31,6 @@ public class App extends Frame {
         frame.addMouseListener(kin);
         frame.addMouseMotionListener(kin); // annoying as hell
 
-
         //4. Size the frame.
         frame.pack();
         //5. Show it.

@@ -5,18 +5,22 @@ public class Inventory {
     Item itemHeld;
     int intheld = 0;
     public boolean isOpen; // should this be here or in GUI (gew-ee)
+    int itemCnt; // is this best
 
     public Inventory(int w, int h) {
         indexMap = new int[w][h];
         items = new Item[MAX_ITEMS];
+        itemCnt = 0; // 0 is null i think, in the table
+        for (int i=0; i<256; i++) // needs this i guess
+            items[i] = new Item();
+        
         itemHeld = new Item();
         for (int i=0; i<16; i++)
             for (int j=0; j<16; j++)
-                indexMap[i][j] = (i+j*16)+1;
+                indexMap[i][j] = 0/*(i+j*16)+1*/;
     }
 
     public int getItem(int invX, int invY) {
-
         int index = indexMap[invX][invY];
 
         return index;
@@ -33,6 +37,46 @@ public class Inventory {
         int tmp = indexMap[invX][invY];
         indexMap[invX][invY] = intheld;
         intheld = tmp;
+    }
+
+    public boolean tryPlaceItem(int invX, int invY, Item item) {
+        /* // want to try with vector and using (compare item locations)? rather than index
+             ---- W ----- invX
+            |   |   
+            |--[i i]                (invX, invY) => lcoation of topleft index, width/height show size
+            H  [i i]                 might be reversed or something, goes down each y then x
+            |  [i i]                 as long as it works right
+            |       (invX, invY)     w and x are same
+            invY
+        */
+
+        // check if can fit, and nothing in way
+        for (int i=0; i<item.width; i++)
+            if (indexMap[i][invY] != 0) // should be items[indexMap[i][invY]].ID != 0, or something else, im 0 is null
+                return false;
+
+        for (int i=0; i<item.height; i++)
+            if (indexMap[invX][i] != 0)
+                return false;
+
+        // place in array
+        itemCnt++; // do here, then it uses it
+        items[itemCnt] = item; // cnt doesnt make to much sense, should be listID or something
+
+        for (int i=0; i<item.width; i++)
+            for (int j=0; j<item.height; j++)
+                indexMap[i][j] = itemCnt;
+
+        return true;
+    }
+
+    public void removeItem(int index) { // just to clean it up, in multiple functions
+        // handle all by parts, to show what is happening, can be used by part
+        for (int i=0; i<16; i++)
+            for(int j=0; j<16; j++)
+                indexMap[i][j] = 0;
+        
+        items[index] = new Item();
     }
 
     // here for now

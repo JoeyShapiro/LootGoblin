@@ -38,6 +38,8 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         for (int i=0; i<16; i++)
             for(int j=0; j<16; j++) { // maybe move eslewhere
                 menuInvItems[i][j] = new JLabel(String.valueOf(inventory.getItem(i, j)));
+                if (inventory.getItem(i, j) == 0)
+                    menuInvItems[i][j].setText(""); // maybe not efficient
                 menuInvItems[i][j].setBounds(32*i, 32*j, 32, 32);
                 menuInventory.add(menuInvItems[i][j], 2, 0);
             }
