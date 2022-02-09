@@ -20,4 +20,17 @@ public class Item {
     }
 
     public BufferedImage getSprite() { return sprite; }
+
+    public Item cloneDeep() {
+        Item clone = new Item();
+
+        clone.ID = this.ID; // if there were comlex, would they also need a clone
+        clone.name = this.name;
+        clone.flavorText = this.flavorText;
+        clone.price = this.price;
+        clone.width = this.width;
+        clone.height = this.height;
+
+        return clone;
+    }
 }

@@ -55,17 +55,17 @@ public class KbmListener implements KeyListener, MouseInputListener {
             // im clever, this will get the item place in inv, seems convoluded though
             int invX = gui.inventory.getInvX(x); // super confusing, must write down
             int invY = gui.inventory.getInvY(y); // divison, duh
-            gui.inventory.swapItem(invX, invY);
-            gui.menuItemHeld.setText(String.valueOf(gui.inventory.intheld));
-            if (gui.inventory.intheld == 0) { // if buffer is null
+            gui.inventory.tryInventory(invX, invY, gui.inventory.itemHeld);
+            gui.menuItemHeld.setText(String.valueOf(gui.inventory.itemHeld.ID));
+            if (gui.inventory.itemHeld.ID == 0) { // if buffer is null
                 gui.menuItemHeld.setVisible(false);
             } else {
                 gui.menuItemHeld.setVisible(true);
-                System.out.println(gui.inventory.intheld);
+                System.out.println(gui.inventory.itemHeld.ID);
             }
             // update ui, only update one taht is changed, smarte
             if (gui.inventory.getItem(invX, invY).ID != 0 && gui.inventory.getItem(invX, invY).ID != gui.inventory.itemHeld.ID) // still feel i can do smarter
-                gui.menuInvItems[invX][invY].setText(String.valueOf(gui.inventory.getItem(invX, invY)/*.getSprite()*/));
+                gui.menuInvItems[invX][invY].setText(String.valueOf(gui.inventory.getItem(invX, invY).ID/*.getSprite()*/));
             else
                 gui.menuInvItems[invX][invY].setText("");
         } else { // maybe this way, will fire if inv open and outside space, but might be fine
@@ -103,7 +103,7 @@ public class KbmListener implements KeyListener, MouseInputListener {
     @Override
     public void mouseMoved(MouseEvent e) {
         //System.out.println("mouse moved"); // annoying
-        if (gui.inventory.intheld != 0)
+        if (gui.inventory.itemHeld.ID != 0)
             gui.menuItemHeld.setLocation(e.getX()-300, e.getY()-100);
     }
 }
