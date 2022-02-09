@@ -64,7 +64,7 @@ public class KbmListener implements KeyListener, MouseInputListener {
                 System.out.println(gui.inventory.intheld);
             }
             // update ui, only update one taht is changed, smarte
-            if (gui.inventory.getItem(invX, invY) != 0 && gui.inventory.getItem(invX, invY) != gui.inventory.intheld) // still feel i can do smarter
+            if (gui.inventory.getItem(invX, invY).ID != 0 && gui.inventory.getItem(invX, invY).ID != gui.inventory.itemHeld.ID) // still feel i can do smarter
                 gui.menuInvItems[invX][invY].setText(String.valueOf(gui.inventory.getItem(invX, invY)/*.getSprite()*/));
             else
                 gui.menuInvItems[invX][invY].setText("");

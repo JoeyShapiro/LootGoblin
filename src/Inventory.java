@@ -20,10 +20,10 @@ public class Inventory {
                 indexMap[i][j] = 0/*(i+j*16)+1*/;
     }
 
-    public int getItem(int invX, int invY) {
+    public Item getItem(int invX, int invY) {
         int index = indexMap[invX][invY];
 
-        return index;
+        return items[index];
     }
 
     public void swapItem(int invX, int invY) {
@@ -34,9 +34,9 @@ public class Inventory {
         // Item tmp = items[index]; // honestly i guessed, and got the buffer right
         // items[index] = itemHeld;
         // itemHeld = tmp;
-        int tmp = indexMap[invX][invY];
-        indexMap[invX][invY] = intheld;
-        intheld = tmp;
+        Item tmp = getItem(invX, invY);
+        items[indexMap[invX][invY]] = itemHeld;
+        itemHeld = tmp;
     }
 
     public boolean tryPlaceItem(int invX, int invY, Item item) {
@@ -77,6 +77,13 @@ public class Inventory {
                 indexMap[i][j] = 0;
         
         items[index] = new Item();
+    }
+
+    public boolean trySwapItem(int invX, int invY, Item item) {
+        //Item tmp = getItem(invX, invY);
+
+
+        return true;
     }
 
     // here for now
