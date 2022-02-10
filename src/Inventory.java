@@ -63,14 +63,26 @@ public class Inventory {
         for (int i=0; i<item.height; i++)
             if (indexMap[invX][i] != 0)
                 return false;
+        
+        // check if room
+        if (itemCnt > MAX_ITEMS)
+            return false;
 
         // place in array
+        // these two arrays confuse my brain, but it works, i think
         itemCnt++; // do here, then it uses it
-        items[itemCnt] = item; // cnt doesnt make to much sense, should be listID or something
+        int itemLID; // needs here to access, but break stops it from growing
+        for (itemLID=1; itemLID<MAX_ITEMS; itemLID++) { // bad fix
+            if (items[itemLID].ID == 0) { // changes everything unless stopped at first occurance
+                items[itemLID] = item; // cnt doesnt make to much sense, should be listID or something
+                break; // does this keep itemLID
+            }
+        }
+        System.out.println("itemLid:" + itemLID);
 
         for (int i=invX; i<item.width+invX; i++) // start where it starts, duh, and needs to go from there
             for (int j=invY; j<item.height+invY; j++)
-                indexMap[i][j] = itemCnt;
+                indexMap[i][j] = itemLID;
 
         itemHeld = new Item();
 
@@ -84,6 +96,7 @@ public class Inventory {
             for(int j=0; j<16; j++)
                 indexMap[i][j] = 0;
         
+        itemCnt--;
         items[index] = new Item();
     }
 
