@@ -68,8 +68,8 @@ public class Inventory {
         itemCnt++; // do here, then it uses it
         items[itemCnt] = item; // cnt doesnt make to much sense, should be listID or something
 
-        for (int i=0; i<item.width; i++)
-            for (int j=0; j<item.height; j++)
+        for (int i=invX; i<item.width+invX; i++) // start where it starts, duh, and needs to go from there
+            for (int j=invY; j<item.height+invY; j++)
                 indexMap[i][j] = itemCnt;
 
         itemHeld = new Item();
