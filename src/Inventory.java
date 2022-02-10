@@ -20,7 +20,14 @@ public class Inventory {
         
         Item itemTEST = new Item();
         itemTEST.ID = 5;
+        itemTEST.name = "1Dtest";
         tryPlaceItem(0, 0, itemTEST);
+        Item item2D = new Item();
+        item2D.ID = 6;
+        item2D.width = 2;
+        item2D.height = 2;
+        item2D.name = "2Dtest";
+        tryPlaceItem(1, 1, item2D);
     }
 
     public Item getItem(int invX, int invY) {
@@ -78,7 +85,6 @@ public class Inventory {
                 break; // does this keep itemLID
             }
         }
-        System.out.println("itemLid:" + itemLID);
 
         for (int i=invX; i<item.width+invX; i++) // start where it starts, duh, and needs to go from there
             for (int j=invY; j<item.height+invY; j++)
@@ -89,11 +95,12 @@ public class Inventory {
         return true;
     }
 
-    public void removeItem(int index) { // just to clean it up, in multiple functions
+    public void removeItem(int invX, int invY, Item item2rm) { // just to clean it up, in multiple functions
         System.out.println("remove");
+        int index = indexMap[invX][invY];
         // handle all by parts, to show what is happening, can be used by part
-        for (int i=0; i<16; i++)
-            for(int j=0; j<16; j++)
+        for (int i=invX; i<item2rm.width+invX; i++) // only set its things to 0
+            for(int j=invY; j<item2rm.height+invY; j++)
                 indexMap[i][j] = 0;
         
         itemCnt--;
@@ -106,7 +113,7 @@ public class Inventory {
         Item itemGone = items[index].cloneDeep(); // might just be pnt
 
         System.out.println("item ID before removed: " + items[index].ID);
-        removeItem(index);
+        removeItem(invX, invY, items[index]);
         System.out.println("item ID after removed: " + items[index].ID);
         return itemGone;
     }

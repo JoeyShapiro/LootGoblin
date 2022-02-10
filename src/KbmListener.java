@@ -64,10 +64,16 @@ public class KbmListener implements KeyListener, MouseInputListener {
                 System.out.println(gui.inventory.itemHeld.ID);
             }
             // update ui, only update one taht is changed, smarte
-            if (gui.inventory.getItem(invX, invY).ID != 0 && gui.inventory.getItem(invX, invY).ID != gui.inventory.itemHeld.ID) // still feel i can do smarter
-                gui.menuInvItems[invX][invY].setText(String.valueOf(gui.inventory.getItem(invX, invY).ID/*.getSprite()*/));
-            else
-                gui.menuInvItems[invX][invY].setText("");
+            Item itemChanged = gui.inventory.itemHeld;
+            if (gui.inventory.itemHeld.ID == 0)
+                itemChanged = gui.inventory.getItem(invX, invY); // has to be up here
+            for (int i=invX; i<itemChanged.width+invX; i++)
+                for(int j=invY; j<itemChanged.height+invY; j++) { // i think this is rigth
+                    if (gui.inventory.getItem(i, j).ID != 0 && gui.inventory.getItem(i, j).ID != gui.inventory.itemHeld.ID) // still feel i can do smarter
+                        gui.menuInvItems[i][j].setText(String.valueOf(gui.inventory.getItem(i, j).ID/*.getSprite()*/));
+                    else
+                        gui.menuInvItems[i][j].setText("");
+                }
         } else { // maybe this way, will fire if inv open and outside space, but might be fine
 
         }
