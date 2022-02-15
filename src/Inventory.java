@@ -64,11 +64,11 @@ public class Inventory {
         System.out.println("place");
         // check if can fit, and nothing in way
         for (int i=0; i<item.width; i++)
-            if (indexMap[i][invY] != 0) // should be items[indexMap[i][invY]].ID != 0, or something else, im 0 is null
+            if (indexMap[invX+i][invY] != 0) // should be items[indexMap[i][invY]].ID != 0, or something else, im 0 is null
                 return false;
-
+        
         for (int i=0; i<item.height; i++)
-            if (indexMap[invX][i] != 0)
+            if (indexMap[invX][invY+i] != 0) // fixed i -> invY+i
                 return false;
         
         // check if room
