@@ -99,10 +99,15 @@ public class Inventory {
         System.out.println("remove");
         int index = indexMap[invX][invY];
         // handle all by parts, to show what is happening, can be used by part
-        for (int i=invX; i<item2rm.width+invX; i++) // only set its things to 0
-            for(int j=invY; j<item2rm.height+invY; j++)
-                indexMap[i][j] = 0;
+        // for (int i=invX; i<item2rm.width+invX; i++) // only set its things to 0
+        //     for(int j=invY; j<item2rm.height+invY; j++)
+        //         indexMap[i][j] = 0;
         
+        for (int i=0; i<16; i++) // only set its things to 0
+            for(int j=0; j<16; j++) // 2 zeros, boring but works. look into
+                if (indexMap[i][j] == index)
+                    indexMap[i][j] = 0;
+
         itemCnt--;
         items[index] = new Item();
     }
