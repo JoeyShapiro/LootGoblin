@@ -60,7 +60,7 @@ public class Inventory {
             |       (invX, invY)     w and x are same
             invY
         */
-
+        
         System.out.println("place");
         // check if can fit, and nothing in way
         for (int i=0; i<item.width; i++)

@@ -19,6 +19,15 @@ public class Item {
         height = 1;
     }
 
+    public Item(int id, String n, String t, int p, int w, int h) {
+        ID = id;
+        name = n;
+        flavorText = t;
+        price = p;
+        width = w;
+        height = h;
+    }
+
     public BufferedImage getSprite() { return sprite; }
 
     public Item cloneDeep() {

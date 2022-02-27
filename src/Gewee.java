@@ -21,6 +21,7 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
     Inventory inventory = new Inventory(16, 16);
     Player player;
     JLabel picLabel;
+    Item[] cellItems = new Item[16];
 
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
@@ -56,6 +57,11 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         //     for (int j=0; j<16; j++)
         //         inventory[i][j] = (i+j*16)+1; // creates a unique number for each, just memeing
         //         // +1 because 0 is gimmick item, to be NULL
+
+        for (int i=0; i<16; i++) {
+            cellItems[i] = new Item();
+            cellItems[i].ID = i;
+        }
 
         menu.add(menuInventory);
         game.setBackground(Color.GREEN); // if opaque, no color
