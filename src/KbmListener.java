@@ -89,12 +89,16 @@ public class KbmListener implements KeyListener, MouseInputListener {
     public void mouseEntered(MouseEvent e) {
         System.out.println("mouse entered");
         // isIn = true; // maybe but how to get start
+        gui.isPaused = false;
+        gui.togglePause(); // should be here i think, best way, otherwise has to keeps checking
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         System.out.println("mouse exited");
         // isIn = false;
+        gui.isPaused = true;
+        gui.togglePause();
     }
 
     @Override

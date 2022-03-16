@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.awt.Color;
+import java.awt.Font;
 
 public class Gewee extends JLayeredPane { // maybe make static, only need one?? how work?
     static JPanel menu = new JPanel(new BorderLayout());
@@ -20,9 +21,13 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
 
     Inventory inventory = new Inventory(16, 16);
     Player player;
-    JLabel picLabel;
+
     Item[] cellItems = new Item[16];
     JLabel[] labelItems = new JLabel[16];
+    Enemy enemy;
+
+    boolean isPaused = false; // should this be here or somewhere else
+    JLabel pause;
 
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
@@ -31,6 +36,12 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         menu.setBounds(0, 0, 1280, 720);
         menu.setLayout(null); // now it needs this, bugs out with LayeredPanel
         menu.setOpaque(false);
+
+        pause = new JLabel("PAUSED");
+        pause.setBounds(640, 100, 256, 100);
+        pause.setForeground(Color.RED);
+        pause.setVisible(false);
+        pause.setFont(new Font("Serif", Font.PLAIN, 32));
 
         menuInventory.setLocation(300, 100); // this must be before panel is added
         menuInventory.setLayout(null); // have to set it here
@@ -75,11 +86,14 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         game.setBackground(Color.GREEN); // if opaque, no color
         
         player = new Player(0, 0, 5, ImageIO.read(new File("res/player.png")));
-        picLabel = new JLabel(new ImageIcon(player.getSprite()));
-        game.add(picLabel);
+        game.add(player.getSprite());
+
+        enemy = new Enemy(500, 500, 5, "e");
+        game.add(enemy.getSprite());
 
         add(game, 1, 0);
         add(menu, 2, 0);
+        add(pause, 3, 0); // make this esc menu at some point
     }
 
     public void reDraw() { // change name
@@ -87,17 +101,28 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
             if (cellItems[i].ID != 0)
                 labelItems[i].setBounds(i*32, i*32, 32, 32);
         //picLabel.setLocation(player.x, player.y);
-        picLabel.setBounds(player.x, player.y, 32, 32); // setLocation uses thing i dont know name of (uses '-' in graph)
+        player.setSpritePos(player.x, player.y); // setLocation uses thing i dont know name of (uses '-' in graph)
+        enemy.setSpritePos(enemy.x, enemy.y); // maybe make ()
     }
 
     public void tick() {
+        if (isPaused) {
+
+            return;
+        } // if the game is paused, stop ticks
+
         player.x += player.velocityX; // change to player.tick
         player.y += player.velocityY;
+        enemy.act();
     }
 
     public void toggleInventory() {
         inventory.isOpen = !inventory.isOpen; // smart, thank you
         menuInventory.setVisible(inventory.isOpen);
+    }
+
+    public void togglePause() {
+        pause.setVisible(isPaused);
     }
 
     public void tryPickup() { // do i really need this much func->func ... in std

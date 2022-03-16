@@ -1,5 +1,5 @@
 import java.awt.image.BufferedImage;
-
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class Entity {
@@ -8,7 +8,7 @@ public class Entity {
     int speed;
     int velocityX;
     int velocityY;
-    BufferedImage sprite;
+    JLabel sprite;
 
     Entity(int nx, int ny, int sp, BufferedImage s) {
         x = nx;
@@ -16,14 +16,24 @@ public class Entity {
         velocityX = 0;
         velocityY = 0;
         speed = sp;
-        sprite = s;
+        sprite = new JLabel(new ImageIcon(s));
+    }
+
+    Entity(int nx, int ny, int sp, String s) {
+        x = nx;
+        y = ny;
+        velocityX = 0;
+        velocityY = 0;
+        speed = sp;
+        sprite = new JLabel(s);
     }
 
     public int getX() { return x; }
     public int getY() { return y; }
     public void setPos(int nx, int ny) { x = nx; y = ny; }
 
-    public BufferedImage getSprite() { return sprite; }
+    public JLabel getSprite() { return sprite; }
+    public void setSpritePos(int x, int y) { sprite.setBounds(x, y, 32, 32); }
 
     public boolean isNextTo(JLabel that) {
         int THRESHOLD = 32;
