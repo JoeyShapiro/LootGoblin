@@ -40,7 +40,7 @@ public class KbmListener implements KeyListener, MouseInputListener {
         else if (e.getKeyChar() == 'd') // right
             gui.player.velocityX = 0;
         else if (e.getKeyChar() == 'f') // pickup
-            System.out.println("PICKUP");
+            gui.tryPickup();
         else if (e.getKeyChar() == 'e') // inventory
             gui.toggleInventory();
     }
@@ -69,13 +69,7 @@ public class KbmListener implements KeyListener, MouseInputListener {
             //     itemChanged = gui.inventory.getItem(invX, invY); // has to be up here
             //for (int i=invX; i<itemChanged.width+invX; i++)
             //for(int j=invY; j<itemChanged.height+invY; j++)
-            for (int i=0; i<16; i++)
-                for(int j=0; j<16; j++) { // i think this is rigth
-                    if (gui.inventory.getItem(i, j).ID != 0 && gui.inventory.getItem(i, j).ID != gui.inventory.itemHeld.ID) // still feel i can do smarter
-                        gui.menuInvItems[i][j].setText(String.valueOf(gui.inventory.getItem(i, j).ID/*.getSprite()*/));
-                    else
-                        gui.menuInvItems[i][j].setText("");
-                }
+            gui.refreshInv();
         } else { // maybe this way, will fire if inv open and outside space, but might be fine
 
         }

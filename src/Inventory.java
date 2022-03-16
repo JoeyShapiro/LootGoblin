@@ -147,7 +147,7 @@ public class Inventory {
         System.out.println("item @ (" + invX + "," + invY + "): ID: " + items[indexMap[invX][invY]].ID);
         Item itemOld = getItem(invX, invY);
         boolean worked = false;
-             if (itemOld.ID == 0 && itemHeld.ID != 0) // 0 1 if holding item and inventory spot is empty
+        if (itemOld.ID == 0 && itemHeld.ID != 0) // 0 1 if holding item and inventory spot is empty. this was indented
             worked = tryPlaceItem(invX, invY, itemNew);
         else if (itemOld.ID != 0 && itemHeld.ID == 0) { // 1 0 if not holding an item and inventory spot is not empty
             itemHeld = removeNgetItem(invX, invY);
@@ -156,6 +156,8 @@ public class Inventory {
             worked = true; // sure... you did nothing... congrats
         else if (itemOld.ID != 0 && itemHeld.ID != 0) // 1 1 if both have something, the worst
             worked = trySwapItem(invX, invY, itemNew);
+        else if (itemOld.ID == 0 && itemHeld.ID == 0 && itemNew.ID != 0) // had to be added, for passing in item from pickup
+            // maybe this doesnt
         // else // figure out DEBUG
 
         System.out.println(worked);

@@ -1,5 +1,7 @@
 import java.awt.image.BufferedImage;
 
+import javax.swing.JLabel;
+
 public class Entity {
     int x;
     int y;
@@ -22,4 +24,14 @@ public class Entity {
     public void setPos(int nx, int ny) { x = nx; y = ny; }
 
     public BufferedImage getSprite() { return sprite; }
+
+    public boolean isNextTo(JLabel that) {
+        int THRESHOLD = 32;
+
+        if (this.x + THRESHOLD >= that.getX() && this.x - THRESHOLD <= that.getX()) // i guessed it (kinda) and got this right
+            if (this.y + THRESHOLD >= that.getY() && this.y - THRESHOLD <= that.getY())
+                return true;
+
+        return false;
+    }
 }

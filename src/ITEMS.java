@@ -1,12 +1,12 @@
 public class ITEMS { // i feel there is a more "standard" way of doing this
     // (ID, Name, Flavor Text, Price, Width, Height)
     // should id auto-inc ??
-    private int lid = 1; // why not, this way it keeps ids clean, try with 1 (skip nothgin)
+    private static int lid = 1; // why not, this way it keeps ids clean, try with 1 (skip nothgin)
     // Debug
     public Item NOTHING = new Item();
     public Item DEBUG = new Item(lid++, "2DTest", "TPI TPI TPI", 100, 2, 3);
     // Weapons
-    public Item HATCHET = new Item(lid++, "Hatchet", "A small axe for small axe needs", 10, 1, 2);
+    public static Item HATCHET = new Item(lid++, "Hatchet", "A small axe for small axe needs", 10, 1, 2);
     // Consumables
     public Item TINCTURE_HEALTH = new Item();
     public Item RAT_BURGER = new Item(lid++, "Rat Burger", "Squekers?, is that you? Oh god", 3, 1, 1);
