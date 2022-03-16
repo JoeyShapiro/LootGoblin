@@ -34,4 +34,18 @@ public class Entity {
 
         return false;
     }
+
+    public boolean isInBounds() { // maybe not here, but keep for later
+        if (x - 1 >= 0 && x + 1 <= 1280)
+            if (y -1 >= 0 && y + 1 <= 720)
+                return true;
+
+        return false;
+    }
+
+    public boolean isTouching(Item that) {
+        
+        
+        return false;
+    }
 }

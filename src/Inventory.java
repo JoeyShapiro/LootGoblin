@@ -5,6 +5,7 @@ public class Inventory {
     Item itemHeld;
     public boolean isOpen; // should this be here or in GUI (gew-ee)
     int itemCnt; // is this best
+    int heldIndex;
 
     public Inventory(int w, int h) {
         indexMap = new int[w][h];
@@ -17,7 +18,8 @@ public class Inventory {
         for (int i=0; i<16; i++)
             for (int j=0; j<16; j++)
                 indexMap[i][j] = 0/*(i+j*16)+1*/;
-        
+        heldIndex = 0;
+
         Item itemTEST = new Item();
         itemTEST.ID = 5;
         itemTEST.name = "1Dtest";
@@ -34,6 +36,10 @@ public class Inventory {
         int index = indexMap[invX][invY];
 
         return items[index];
+    }
+
+    public int getItemIndex(int invX, int invY) {
+        return indexMap[invX][invY];
     }
 
     public void swapItem(int invX, int invY) {
@@ -161,6 +167,17 @@ public class Inventory {
         // else // figure out DEBUG
 
         System.out.println(worked);
+        return worked;
+    }
+
+    public boolean tryAutoItem(Item item) {
+        boolean worked = false;
+
+        for (int i=0; i<16; i++) // should work
+            for(int j=0; j<16; j++) // just brute force it, but find way to smart place in open
+                if (indexMap[i][j] == 0 && !worked)
+                    worked = tryPlaceItem(i, j, item); // this already checks the inv spaces
+
         return worked;
     }
 

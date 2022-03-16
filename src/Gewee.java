@@ -103,11 +103,11 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
     public void tryPickup() { // do i really need this much func->func ... in std
         for (int i=0; i<16; i++) { // i need to do sprite, and find way to link items
             if (player.isNextTo(labelItems[i]) && cellItems[i].ID != 0) {
-                boolean worked = inventory.tryPlaceItem(5, 10, cellItems[i]); // can this be in if statement
+                boolean worked = inventory.tryAutoItem(cellItems[i]); // can this be in if statement
                 if (worked) {
                     System.out.println("Collected item: " + cellItems[i].name);
                     cellItems[i] = new Item();
-                    labelItems[i].setText("collected");
+                    labelItems[i].setText(""); // might be best way
                 } else {
                     System.out.println("Inventory is full");
                 }
@@ -119,8 +119,8 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
 
     public void refreshInv() { // should be here i think
         for (int i=0; i<16; i++)
-                for(int j=0; j<16; j++) { // i think this is rigth
-                    if (inventory.getItem(i, j).ID != 0 && inventory.getItem(i, j).ID != inventory.itemHeld.ID) // still feel i can do smarter
+                for(int j=0; j<16; j++) { // i think this is rigth /* inventory.getItem(i, j).ID != inventory.itemHeld.ID */
+                    if (inventory.getItem(i, j).ID != 0 && inventory.getItemIndex(i, j) != inventory.heldIndex) // still feel i can do smarter
                         menuInvItems[i][j].setText(String.valueOf(inventory.getItem(i, j).ID/*.getSprite()*/));
                     else
                         menuInvItems[i][j].setText("");
