@@ -68,6 +68,11 @@ public class Inventory {
         */
         
         System.out.println("place");
+
+        // first of all, check if goes out of bounds
+        if (invX+item.width >= 16 || invY+item.height >= 16)
+            return false;
+
         // check if can fit, and nothing in way
         for (int i=0; i<item.width; i++)
             if (indexMap[invX+i][invY] != 0) // should be items[indexMap[i][invY]].ID != 0, or something else, im 0 is null
