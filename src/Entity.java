@@ -58,4 +58,17 @@ public class Entity {
         
         return false;
     }
+
+    public boolean isTouchingOrWorse(Entity that) {
+
+        return false;
+    }
+
+    public boolean isAt(int point[]) {
+        if (x+32 >= point[0] && x-32 <= point[0])
+            if (y+32 >= point[1] && y-32 <= point[1])
+                return true;
+
+        return false;
+    }
 }

@@ -88,7 +88,7 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         player = new Player(0, 0, 5, ImageIO.read(new File("res/player.png")));
         game.add(player.getSprite());
 
-        enemy = new Enemy(500, 500, 5, "e");
+        enemy = new Enemy(500, 500, 2, "e");
         game.add(enemy.getSprite());
 
         add(game, 1, 0);
@@ -113,7 +113,7 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
 
         player.x += player.velocityX; // change to player.tick
         player.y += player.velocityY;
-        enemy.act();
+        enemy.act(this);
     }
 
     public void toggleInventory() {
@@ -150,5 +150,13 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
                     else
                         menuInvItems[i][j].setText("");
                 }
+    }
+
+    public boolean isEntity(int point[]) {
+        if (player.isAt(point))
+            return true;
+        //System.out.println("Gewee.isEntity()");
+
+        return false;
     }
 }
