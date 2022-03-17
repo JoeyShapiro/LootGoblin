@@ -59,7 +59,11 @@ public class Entity {
         return false;
     }
 
+    // is Colliding, but i like the name better :P
     public boolean isTouchingOrWorse(Entity that) {
+        if (this.x+32 >= that.x && this.x-32 <= that.x)
+            if (this.y+32 >= that.y && this.y-32 <= that.y)
+                return true;
 
         return false;
     }
