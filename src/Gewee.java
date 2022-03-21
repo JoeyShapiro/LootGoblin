@@ -3,13 +3,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.awt.Color;
 import java.awt.Font;
 
-public class Gewee extends JLayeredPane { // maybe make static, only need one?? how work?
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Gewee extends JLayeredPane implements ActionListener{ // maybe make static, only need one?? how work?
     static JPanel menu = new JPanel(new BorderLayout());
     static JPanel game = new JPanel();
     static JLayeredPane menuInventory = new JLayeredPane(/*new BorderLayout()*/); // i doht care, its a game
@@ -29,6 +34,10 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
     boolean isPaused = false; // should this be here or somewhere else
     JLabel pause;
 
+    Console console = new Console();
+    JPanel menuConsole = new JPanel();
+    JTextField menuConsoleCommand;
+
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
         game.setLayout(new BorderLayout());
@@ -42,6 +51,12 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         pause.setForeground(Color.RED);
         pause.setVisible(false);
         pause.setFont(new Font("Serif", Font.PLAIN, 32));
+
+        // console menu
+        menuConsole.setLayout(null);
+        menuConsole.setBounds(0, 720-(720/3), 1280-(1280/2), 720-(720/3));
+        menuConsole.setVisible(console.isOpen);
+        menuConsole.setBackground(Color.GRAY);
 
         menuInventory.setLocation(300, 100); // this must be before panel is added
         menuInventory.setLayout(null); // have to set it here
@@ -94,6 +109,7 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         add(game, 1, 0);
         add(menu, 2, 0);
         add(pause, 3, 0); // make this esc menu at some point
+        add(menuConsole, 4, 0);
     }
 
     public void reDraw() { // change name
@@ -126,7 +142,18 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
     }
 
     public void toggleConsole() {
-        
+        console.isOpen = !console.isOpen;
+        isPaused = console.isOpen; // smart, will copy consoel
+        togglePause(); // needs to be this way
+        menuConsole.setVisible(console.isOpen);
+
+        if (console.isOpen) {
+            menuConsoleCommand = new JTextField(32);
+            menuConsoleCommand.setBounds(0, 180, 1280-(1280/2), 32);
+            menuConsoleCommand.addActionListener(this); // smarter
+            menuConsole.add(menuConsoleCommand);
+        } else
+            menuConsole.remove(menuConsoleCommand);
     }
 
     public void tryPickup() { // do i really need this much func->func ... in std
@@ -162,5 +189,13 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         //System.out.println("Gewee.isEntity()");
 
         return false;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String command = menuConsoleCommand.getText(); // amybe add all in console, to allow for more options and change
+        String output = console.tryRun(command);
+        menuConsoleCommand.setText("");
+        System.out.println(output); // yeabh add to Console, to properly deal with, should multiple things hande ui, or just path to it
     }
 }
