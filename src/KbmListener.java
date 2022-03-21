@@ -43,6 +43,8 @@ public class KbmListener implements KeyListener, MouseInputListener {
             gui.tryPickup();
         else if (e.getKeyChar() == 'e') // inventory
             gui.toggleInventory();
+        else if (e.getKeyChar() == '`') // console
+            gui.toggleConsole();
     }
 
     @Override

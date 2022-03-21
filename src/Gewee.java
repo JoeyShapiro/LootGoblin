@@ -125,6 +125,10 @@ public class Gewee extends JLayeredPane { // maybe make static, only need one?? 
         pause.setVisible(isPaused);
     }
 
+    public void toggleConsole() {
+        
+    }
+
     public void tryPickup() { // do i really need this much func->func ... in std
         for (int i=0; i<16; i++) { // i need to do sprite, and find way to link items
             if (player.isNextTo(labelItems[i]) && cellItems[i].ID != 0) {
