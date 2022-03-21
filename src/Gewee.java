@@ -4,6 +4,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import java.awt.BorderLayout;
 import java.io.File;
@@ -38,6 +39,10 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     JPanel menuConsole = new JPanel();
     JTextField menuConsoleCommand;
 
+    int mapX = 0, mapY = 0, mapMAX = 4;
+    JPanel menuMap = new JPanel();
+    JLabel[][] mapCells = new JLabel[mapMAX][mapMAX];
+
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
         game.setLayout(new BorderLayout());
@@ -46,6 +51,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         menu.setLayout(null); // now it needs this, bugs out with LayeredPanel
         menu.setOpaque(false);
 
+        // pause
         pause = new JLabel("PAUSED");
         pause.setBounds(640, 100, 256, 100);
         pause.setForeground(Color.RED);
@@ -58,6 +64,19 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         menuConsole.setVisible(console.isOpen);
         menuConsole.setBackground(Color.GRAY);
 
+        // minimap
+        menuMap.setLayout(null);
+        menuMap.setBounds(1280-(1280/5), 0, 256, 256);
+        menuMap.setBackground(new Color(0, 0, 0, 100));
+        int menuCellSize = 256/mapMAX;
+        for (int i=0; i<mapMAX; i++)
+            for(int j=0; j<mapMAX; j++) {
+                mapCells[i][j] = new JLabel("?", SwingConstants.CENTER);
+                mapCells[i][j].setBounds(menuCellSize*i, menuCellSize*j, menuCellSize, menuCellSize);
+                menuMap.add(mapCells[i][j]);
+            }
+
+        // inventory
         menuInventory.setLocation(300, 100); // this must be before panel is added
         menuInventory.setLayout(null); // have to set it here
 
@@ -109,7 +128,8 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         add(game, 1, 0);
         add(menu, 2, 0);
         add(pause, 3, 0); // make this esc menu at some point
-        add(menuConsole, 4, 0);
+        add(menuMap, 4, 0);
+        add(menuConsole, 5, 0);
     }
 
     public void reDraw() { // change name
@@ -197,5 +217,10 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         String output = console.tryRun(command);
         menuConsoleCommand.setText("");
         System.out.println(output); // yeabh add to Console, to properly deal with, should multiple things hande ui, or just path to it
+    }
+
+    // function to randomly generate the map
+    public void genMap() {
+
     }
 }
