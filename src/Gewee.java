@@ -75,6 +75,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 mapCells[i][j].setBounds(menuCellSize*i, menuCellSize*j, menuCellSize, menuCellSize);
                 menuMap.add(mapCells[i][j]);
             }
+        mapCells[mapX][mapY].setText("@"); // set at player pos
 
         // inventory
         menuInventory.setLocation(300, 100); // this must be before panel is added
@@ -106,7 +107,6 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
 
         for (int i=0; i<16; i++) {
             cellItems[i] = new Item();
-            //cellItems[i].ID = i;
         }
 
         for (int i=0; i<16; i++) { // is this ref
@@ -150,6 +150,8 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         player.x += player.velocityX; // change to player.tick
         player.y += player.velocityY;
         enemy.act(this);
+
+        checkCell();
     }
 
     public void toggleInventory() {
@@ -222,5 +224,12 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     // function to randomly generate the map
     public void genMap() {
 
+    }
+
+    public void checkCell() {
+        if (player.x < 0 && mapX >= 0) { // maybe make block size
+            player.x = 1280;
+            mapX--;
+        }
     }
 }

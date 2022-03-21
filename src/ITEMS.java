@@ -17,4 +17,9 @@ public class ITEMS { // i feel there is a more "standard" way of doing this
     // Junk
     public Item BLODDY_RAG = new Item(lid++, "Bloody Rag", "Let's hope it's not your's", 1, 1, 1);
     // Misc? like coins and stuff, these will need special rules
+
+    // FUNCTIONS
+    public Item spawnRandomItem() {
+        return NOTHING;
+    }
 }
