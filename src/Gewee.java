@@ -42,6 +42,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     int mapX = 0, mapY = 0, mapMAX = 4;
     JPanel menuMap = new JPanel();
     JLabel[][] mapCells = new JLabel[mapMAX][mapMAX];
+    Cell[][] cells = new Cell[mapMAX][mapMAX];
 
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
@@ -71,11 +72,11 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         int menuCellSize = 256/mapMAX;
         for (int i=0; i<mapMAX; i++)
             for(int j=0; j<mapMAX; j++) {
-                mapCells[i][j] = new JLabel("?", SwingConstants.CENTER);
+                cells[i][j] = new Cell(); // have to do it first, and this is efficient, rather than another loop
+                mapCells[i][j] = new JLabel(cells[i][j].info, SwingConstants.CENTER); // also sets player pos
                 mapCells[i][j].setBounds(menuCellSize*i, menuCellSize*j, menuCellSize, menuCellSize);
                 menuMap.add(mapCells[i][j]);
             }
-        mapCells[mapX][mapY].setText("@"); // set at player pos
 
         // inventory
         menuInventory.setLocation(300, 100); // this must be before panel is added
@@ -224,12 +225,34 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     // function to randomly generate the map
     public void genMap() {
 
+        refreshMap();
     }
 
     public void checkCell() {
+        cells[mapX][mapY].info = "?"; // smart, maybe come back to
+
         if (player.x < 0 && mapX >= 0) { // maybe make block size
             player.x = 1280;
             mapX--;
+        } else if (player.x > 1280 && mapX <= mapMAX) {
+            player.x = 0;
+            mapX++;
+        } else if (player.y < 0 && mapY >= 0) {
+            player.y = 720;
+            mapY--;
+        } else if (player.y > 720 && mapY <= mapMAX) {
+            player.y = 0;
+            mapY++;
         }
+
+        cells[mapX][mapY].info = "@"; // maybe just change ui, and not cell, how to change back to what is known
+        refreshMap();
+    }
+
+    public void refreshMap() {
+        for (int i=0; i<mapMAX; i++)
+            for(int j=0; j<mapMAX; j++) {
+                mapCells[i][j].setText(cells[i][j].info);
+            }
     }
 }

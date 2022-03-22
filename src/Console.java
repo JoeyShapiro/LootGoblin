@@ -1,21 +1,30 @@
 public class Console {
     boolean isOpen;
+    String[] log;
 
     public Console() {
         isOpen = false;
+        log = new String[6];
     }
 
     public String tryRun(String command) {
         String output = "";
 
+        String[] args = command.split(" ");
+
         // find better way
-        if (command.startsWith("spawnItemAt"))
-            spawnItemAt(command.substring(12, 13));
+        if (args[0] == "spawn") { // spawn item.ID x y // spawn on me, spawn in me, spawn on (2,1), spawn in (2,1)??
+            int id = Integer.parseInt(args[1]);
+            int x = Integer.parseInt(args[2]);
+            int y = Integer.parseInt(args[3]);
+            
+            spawnItemAt(id, x, y);
+        }
 
         return output;
     }
 
-    public String spawnItemAt(String item) {
+    public String spawnItemAt(int id, int x, int y) {
         String output = "";
 
         

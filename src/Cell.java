@@ -4,8 +4,13 @@ public class Cell {
 
     Item[] items = new Item[16];
     Enemy[] enemies = new Enemy[16];
+    String info;
 
     public Cell() {
+        info = "?";
+    }
+
+    public void addInfo(String learned) {
 
     }
 }
