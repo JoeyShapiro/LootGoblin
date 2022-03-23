@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class ITEMS { // i feel there is a more "standard" way of doing this
     // (ID, Name, Flavor Text, Price, Width, Height)
     // should id auto-inc ??
@@ -37,11 +39,17 @@ public class ITEMS { // i feel there is a more "standard" way of doing this
     };
 
     // FUNCTIONS
-    public Item spawnRandomItem() { // should this be here, or somewhere else
+    public Item DEPspawnRandomItem() { // should this be here, or somewhere else
         return NOTHING;
     }
 
-    public Item spawnItem(int id) {
+    public static Item getItem(int id) {
         return LIST_ITEMS[id].cloneDeep();
+    }
+
+    public static Item getItemRandom() {
+        Random rng = new Random(); // should this be here, or just use getItem
+
+        return getItem(rng.nextInt(lid));
     }
 }

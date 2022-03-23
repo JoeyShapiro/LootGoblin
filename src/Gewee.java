@@ -72,8 +72,8 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         int menuCellSize = 256/mapMAX;
         for (int i=0; i<mapMAX; i++)
             for(int j=0; j<mapMAX; j++) {
-                cells[i][j] = new Cell(); // have to do it first, and this is efficient, rather than another loop
-                mapCells[i][j] = new JLabel(cells[i][j].info, SwingConstants.CENTER); // also sets player pos
+                cells[i][j] = new Cell(10, 10); // have to do it first, and this is efficient, rather than another loop
+                mapCells[i][j] = new JLabel(cells[i][j].infoGet(), SwingConstants.CENTER); // also sets player pos
                 mapCells[i][j].setBounds(menuCellSize*i, menuCellSize*j, menuCellSize, menuCellSize);
                 menuMap.add(mapCells[i][j]);
             }
@@ -133,13 +133,14 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         add(menuConsole, 5, 0);
     }
 
-    public void reDraw() { // change name
+    public void reDraw() { // change name, move to Cell
         for (int i=0; i<16; i++)
             if (cellItems[i].ID != 0)
                 labelItems[i].setBounds(i*32, i*32, 32, 32);
         //picLabel.setLocation(player.x, player.y);
         player.setSpritePos(player.x, player.y); // setLocation uses thing i dont know name of (uses '-' in graph)
         enemy.setSpritePos(enemy.x, enemy.y); // maybe make ()
+        //cells[mapX][mapY].reDraw(player);
     }
 
     public void tick() {
@@ -151,6 +152,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         player.x += player.velocityX; // change to player.tick
         player.y += player.velocityY;
         enemy.act(this);
+        // cells[mapX][mapY].tick(player);
 
         checkCell();
     }
@@ -229,7 +231,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     }
 
     public void checkCell() {
-        cells[mapX][mapY].info = "?"; // smart, maybe come back to
+        //cells[mapX][mapY].info = "?"; // smart, maybe come back to, caused issue
 
         if (player.x < 0 && mapX >= 0) { // maybe make block size
             player.x = 1280;
@@ -245,14 +247,17 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             mapY++;
         }
 
-        cells[mapX][mapY].info = "@"; // maybe just change ui, and not cell, how to change back to what is known
+        cells[mapX][mapY].discover();
+        //cells[mapX][mapY].info = "@"; // maybe just change ui, and not cell, how to change back to what is known
         refreshMap();
     }
 
     public void refreshMap() {
         for (int i=0; i<mapMAX; i++)
             for(int j=0; j<mapMAX; j++) {
-                mapCells[i][j].setText(cells[i][j].info);
+                mapCells[i][j].setText(cells[i][j].infoGet());
+                if (i == mapX && j == mapY) // smart
+                    mapCells[i][j].setText("@");
             }
     }
 }
