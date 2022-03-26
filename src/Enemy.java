@@ -2,6 +2,10 @@ import java.awt.image.BufferedImage;
 
 public class Enemy extends Entity {
 
+    Enemy() {
+        super();
+    }
+    
     Enemy(int nx, int ny, int sp, BufferedImage s) {
         super(nx, ny, sp, s);
     }
@@ -9,6 +13,7 @@ public class Enemy extends Entity {
     Enemy(int nx, int ny, int sp, String s) {
         super(nx, ny, sp, s);
     }
+
 
     public void act(Cell cell) { // is this inefficient
         // prelim

@@ -13,6 +13,13 @@ public class Object { // maybe change this whole sceme around, i really need to 
         y = -1;
     }
 
+    public Object(Item i, int nx, int ny) {
+        item = i;
+        sprite = new JLabel(""+item.ID);
+        x = nx;
+        y = ny;
+    }
+
     public Object(String s, Item i, int nx, int ny) {
         item = i;
         sprite = new JLabel(s);
@@ -28,4 +35,6 @@ public class Object { // maybe change this whole sceme around, i really need to 
         // x = nx; y = ny;
         sprite.setBounds(nx, ny, 32, 32);
     }
+
+    public void reDraw() { setPos(x, y); }
 }

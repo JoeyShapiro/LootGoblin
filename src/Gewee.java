@@ -28,9 +28,9 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     Inventory inventory = new Inventory(16, 16);
     Player player;
 
-    Item[] cellItems = new Item[16];
-    JLabel[] labelItems = new JLabel[16];
-    Enemy enemy;
+    // Item[] cellItems = new Item[16]; Hurray no longer need thiese things
+    // JLabel[] labelItems = new JLabel[16];
+    // Enemy enemy;
 
     boolean isPaused = false; // should this be here or somewhere else
     JLabel pause;
@@ -46,7 +46,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     // current cell stuff
     int MAX_STUFF = 16;
     Object[] objects = new Object[MAX_STUFF]; // i do need to load it, so i can load the sprites into panel, otherwise annoyting..?
-     // i could gimmick it, but that looks bad and is not as fun. (all cells have same amt so keep 16 in panel and change location)
+    Enemy[] enemies = new Enemy[MAX_STUFF]; // i could gimmick it, but that looks bad and is not as fun. (all cells have same amt so keep 16 in panel and change location)
 
 
     public Gewee(/* int width, int height */) throws IOException {
@@ -110,17 +110,6 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         //     for (int j=0; j<16; j++)
         //         inventory[i][j] = (i+j*16)+1; // creates a unique number for each, just memeing
         //         // +1 because 0 is gimmick item, to be NULL
-
-        for (int i=0; i<16; i++) {
-            cellItems[i] = new Item();
-        }
-
-        for (int i=0; i<16; i++) { // is this ref
-            cellItems[i] = ITEMS.HATCHET.cloneDeep();
-            labelItems[i] = new JLabel(""+cellItems[i].ID);
-            labelItems[i].setBounds(i*32, i*32, 32, 32);
-            game.add(labelItems[i]);
-        }
         
         menu.add(menuInventory);
         game.setBackground(Color.GREEN); // if opaque, no color
@@ -128,24 +117,28 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         player = new Player(0, 0, 5, ImageIO.read(new File("res/player.png")));
         game.add(player.getSprite());
 
-        enemy = new Enemy(500, 500, 2, "e");
-        game.add(enemy.getSprite());
+        // enemy = new Enemy(500, 500, 2, "e");
+        // game.add(enemy.getSprite());
 
         add(game, 1, 0);
         add(menu, 2, 0);
         add(pause, 3, 0); // make this esc menu at some point
         add(menuMap, 4, 0);
         add(menuConsole, 5, 0);
+
+        loadCell(cells[mapX][mapY], false); // so it has something to read
+        refreshMap();
     }
 
     public void reDraw() { // change name, move to Cell
-        for (int i=0; i<16; i++)
-            if (cellItems[i].ID != 0)
-                labelItems[i].setBounds(i*32, i*32, 32, 32);
         //picLabel.setLocation(player.x, player.y);
-        player.reDraw(); // setLocation uses thing i dont know name of (uses '-' in graph)
-        //enemy.setSpritePos(enemy.x, enemy.y); // maybe make ()
-        cells[mapX][mapY].reDraw(player);
+        player.setSpritePos(player.x, player.y); // setLocation uses thing i dont know name of (uses '-' in graph)
+        for (int i = 0; i < MAX_STUFF; i++) {
+            if (objects[i].x != -1 && objects[i].item.ID != 0) // change to isAlive or something clever
+                objects[i].reDraw();
+            if (enemies[i].x != -1)
+                enemies[i].reDraw();
+        }
     }
 
     public void tick() {
@@ -153,11 +146,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
 
             return;
         } // if the game is paused, stop ticks
-
-        // player.x += player.velocityX; // change to player.tick
-        // player.y += player.velocityY;
-        // enemy.act(this);
-        cells[mapX][mapY].tick(player);
+        cells[mapX][mapY].tick(player); // this works, so keep for now i guess.
 
         checkCell();
     }
@@ -187,8 +176,20 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     }
 
     public void tryPickup() { // do i really need this much func->func ... in std
-        cells[mapX][mapY].tryPickup(player, inventory);
-        refreshInv(); // just need gui
+        for (int i=0; i<16; i++) { // i need to do sprite, and find way to link items
+            if (player.isNextTo(objects[i].sprite) && objects[i].item.ID != 0) {
+                boolean worked = inventory.tryAutoItem(objects[i].item); // can this be in if statement
+                if (worked) {
+                    System.out.println("Collected item: " + objects[i].item.name);
+                    objects[i].item = new Item(); // maybe make object.remove();
+                    objects[i].sprite.setText(""); // might be best way
+                } else {
+                    System.out.println("Inventory is full");
+                }
+                refreshInv(); // just need gui
+                return; // so you dont pick up multiple
+            }
+        }
     }
 
     public void refreshInv() { // should be here i think
@@ -241,7 +242,26 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             cells[mapX][mapY].discover();
             //cells[mapX][mapY].info = "@"; // maybe just change ui, and not cell, how to change back to what is known
             refreshMap();
-            //loadCell(cells[mapX][mapY]);
+            loadCell(cells[mapX][mapY], true);
+        }
+    }
+
+    public void loadCell(Cell cell, boolean isReload) {
+        // unload old stuff
+        if (isReload) // if removing old assets, ie. not on startup
+            for (int i = 0; i < MAX_STUFF; i++) {
+                game.remove(objects[i].sprite);
+                game.remove(enemies[i].sprite);
+            }
+
+        // use new cell stuff
+        objects = cell.objects;
+        enemies = cell.enemies;
+
+        // load new stuff
+        for (int i = 0; i < MAX_STUFF; i++) {
+            game.add(objects[i].sprite);
+            game.add(enemies[i].sprite);
         }
     }
 

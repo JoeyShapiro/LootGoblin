@@ -10,6 +10,15 @@ public class Entity {
     int velocityY;
     JLabel sprite;
 
+    Entity() {
+        x = -1;
+        y = -1;
+        velocityX = 0;
+        velocityY = 0;
+        speed = 0;
+        sprite = new JLabel("");
+    }
+
     Entity(int nx, int ny, int sp, BufferedImage s) {
         x = nx;
         y = ny;
