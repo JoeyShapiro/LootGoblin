@@ -10,7 +10,7 @@ public class Enemy extends Entity {
         super(nx, ny, sp, s);
     }
 
-    public void act(Gewee gui) { // is this inefficient
+    public void act(Cell cell) { // is this inefficient
         // prelim
         velocityX = 0;
         velocityY = 0;
@@ -19,7 +19,7 @@ public class Enemy extends Entity {
         int legalMoves[][] = new int[5][2];
         int legalCnt = 0;
         for (int possibleMove[] : possibleMoves) {
-            if (!gui.isEntity(possibleMove)) {
+            if (!cell.isEntity(possibleMove)) {
                 legalMoves[legalCnt][0] = possibleMove[0];
                 legalMoves[legalCnt++][1] = possibleMove[1]; // ++ here
             }
@@ -30,7 +30,7 @@ public class Enemy extends Entity {
         for (int legalMove[] : legalMoves) {
             int xPrime = legalMove[0];
             int yPrime = legalMove[1];
-            double h = Math.sqrt(((xPrime - gui.player.x)*(xPrime - gui.player.x)) + ((yPrime - gui.player.y)*(yPrime - gui.player.y))); // euclidean (EFFICIENCY) // copied from SlicedBread
+            double h = Math.sqrt(((xPrime - cell.player.x)*(xPrime - cell.player.x)) + ((yPrime - cell.player.y)*(yPrime - cell.player.y))); // euclidean (EFFICIENCY) // copied from SlicedBread
             if (h <= bestH) {
                 bestH = h;
                 bestMove[0] = xPrime;

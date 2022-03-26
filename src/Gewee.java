@@ -43,6 +43,11 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     JPanel menuMap = new JPanel();
     JLabel[][] mapCells = new JLabel[mapMAX][mapMAX];
     Cell[][] cells = new Cell[mapMAX][mapMAX];
+    // current cell stuff
+    int MAX_STUFF = 16;
+    Object[] objects = new Object[MAX_STUFF]; // i do need to load it, so i can load the sprites into panel, otherwise annoyting..?
+     // i could gimmick it, but that looks bad and is not as fun. (all cells have same amt so keep 16 in panel and change location)
+
 
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
@@ -138,9 +143,9 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             if (cellItems[i].ID != 0)
                 labelItems[i].setBounds(i*32, i*32, 32, 32);
         //picLabel.setLocation(player.x, player.y);
-        player.setSpritePos(player.x, player.y); // setLocation uses thing i dont know name of (uses '-' in graph)
-        enemy.setSpritePos(enemy.x, enemy.y); // maybe make ()
-        //cells[mapX][mapY].reDraw(player);
+        player.reDraw(); // setLocation uses thing i dont know name of (uses '-' in graph)
+        //enemy.setSpritePos(enemy.x, enemy.y); // maybe make ()
+        cells[mapX][mapY].reDraw(player);
     }
 
     public void tick() {
@@ -149,10 +154,10 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             return;
         } // if the game is paused, stop ticks
 
-        player.x += player.velocityX; // change to player.tick
-        player.y += player.velocityY;
-        enemy.act(this);
-        // cells[mapX][mapY].tick(player);
+        // player.x += player.velocityX; // change to player.tick
+        // player.y += player.velocityY;
+        // enemy.act(this);
+        cells[mapX][mapY].tick(player);
 
         checkCell();
     }
@@ -182,20 +187,8 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     }
 
     public void tryPickup() { // do i really need this much func->func ... in std
-        for (int i=0; i<16; i++) { // i need to do sprite, and find way to link items
-            if (player.isNextTo(labelItems[i]) && cellItems[i].ID != 0) {
-                boolean worked = inventory.tryAutoItem(cellItems[i]); // can this be in if statement
-                if (worked) {
-                    System.out.println("Collected item: " + cellItems[i].name);
-                    cellItems[i] = new Item();
-                    labelItems[i].setText(""); // might be best way
-                } else {
-                    System.out.println("Inventory is full");
-                }
-                refreshInv();
-                return; // so you dont pick up multiple
-            }
-        }
+        cells[mapX][mapY].tryPickup(player, inventory);
+        refreshInv(); // just need gui
     }
 
     public void refreshInv() { // should be here i think
@@ -206,14 +199,6 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                     else
                         menuInvItems[i][j].setText("");
                 }
-    }
-
-    public boolean isEntity(int point[]) {
-        if (player.isAt(point))
-            return true;
-        //System.out.println("Gewee.isEntity()");
-
-        return false;
     }
 
     @Override
@@ -232,24 +217,32 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
 
     public void checkCell() {
         //cells[mapX][mapY].info = "?"; // smart, maybe come back to, caused issue
+        boolean changedCell = false; // should i load the cell or just do cell.doStuff(), objects = cell.objects would be fun, but cell.reDraw seems btr
 
         if (player.x < 0 && mapX >= 0) { // maybe make block size
             player.x = 1280;
             mapX--;
+            changedCell = true;
         } else if (player.x > 1280 && mapX <= mapMAX) {
             player.x = 0;
             mapX++;
+            changedCell = true;
         } else if (player.y < 0 && mapY >= 0) {
             player.y = 720;
             mapY--;
+            changedCell = true;
         } else if (player.y > 720 && mapY <= mapMAX) {
             player.y = 0;
             mapY++;
+            changedCell = true;
         }
 
-        cells[mapX][mapY].discover();
-        //cells[mapX][mapY].info = "@"; // maybe just change ui, and not cell, how to change back to what is known
-        refreshMap();
+        if (changedCell) { // lighten the load
+            cells[mapX][mapY].discover();
+            //cells[mapX][mapY].info = "@"; // maybe just change ui, and not cell, how to change back to what is known
+            refreshMap();
+            //loadCell(cells[mapX][mapY]);
+        }
     }
 
     public void refreshMap() {

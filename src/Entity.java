@@ -34,6 +34,7 @@ public class Entity {
 
     public JLabel getSprite() { return sprite; }
     public void setSpritePos(int x, int y) { sprite.setBounds(x, y, 32, 32); }
+    public void reDraw() { setSpritePos(x, y); }
 
     public boolean isNextTo(JLabel that) {
         int THRESHOLD = 32;
