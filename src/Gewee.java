@@ -9,6 +9,7 @@ import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -82,7 +83,8 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 mapCells[i][j].setBounds(menuCellSize*i, menuCellSize*j, menuCellSize, menuCellSize);
                 menuMap.add(mapCells[i][j]);
             }
-
+        genMap();
+        
         // inventory
         menuInventory.setLocation(300, 100); // this must be before panel is added
         menuInventory.setLayout(null); // have to set it here
@@ -126,6 +128,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         add(menuMap, 4, 0);
         add(menuConsole, 5, 0);
 
+        //genMap(); // first, wait
         loadCell(cells[mapX][mapY], false); // so it has something to read
         refreshMap();
     }
@@ -211,9 +214,15 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     }
 
     // function to randomly generate the map
-    public void genMap() {
+    public void genMap() { // i need to mapCells too
+        Random rng = new Random();
+        cells[0][0] = new Cell(25, 25); // empty cell (should be empty, but not for testing)
+        for (int i = 0; i < mapMAX; i++)
+            for (int j = 0; j < mapMAX; j++) {
+                // sliced bread wont work, needs object and create connections in one
+            }
 
-        refreshMap();
+        //refreshMap(); // i dont think this needs to be here, cause it has to load at the very end anyway, after cell is loaded
     }
 
     public void checkCell() {
