@@ -5,10 +5,13 @@ public class Cell {
     int y;
 
     int MAX_STUFF = 16;
+    int CELL_SIZE = 22;
     int chanceItem;
     int chanceEntity;
     Object[] objects = new Object[MAX_STUFF];
     Enemy[] enemies = new Enemy[MAX_STUFF];
+    Pickup[] pickups = new Pickup[MAX_STUFF];
+    Tile[][] tiles = new Tile[CELL_SIZE][CELL_SIZE];
     String info;
     boolean discovered = false;// cheaper find, think false is redundant
     Player player;
@@ -48,7 +51,9 @@ public class Cell {
     }
 
     public String infoGet() {
-        if (!discovered) // if unknown
+        if (info == "")
+            return "";
+        else if (!discovered) // if unknown
             return "?";
         return info;
     }

@@ -83,7 +83,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 mapCells[i][j].setBounds(menuCellSize*i, menuCellSize*j, menuCellSize, menuCellSize);
                 menuMap.add(mapCells[i][j]);
             }
-        genMap();
+        //genMap(); // come back to, (linked-list, how sort)
         
         // inventory
         menuInventory.setLocation(300, 100); // this must be before panel is added
@@ -214,12 +214,28 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     }
 
     // function to randomly generate the map
-    public void genMap() { // i need to mapCells too
+    public void genMap() { // i need to mapCells too, RIGHT this function can take time because it only happens once
         Random rng = new Random();
         cells[0][0] = new Cell(25, 25); // empty cell (should be empty, but not for testing)
         for (int i = 0; i < mapMAX; i++)
-            for (int j = 0; j < mapMAX; j++) {
+            for (int j = 0; j < mapMAX; j++) { // i think this is smart by saving checks, using "gimmick", idk
                 // sliced bread wont work, needs object and create connections in one
+                if (i == 0) // there must be a better way to check
+                    if (cells[i+1][j].info != "" || cells[i][j-1].info != "" || cells[i][j+1].info != "")
+                        if (rng.nextInt(i) == 0)
+                            cells[i][j] = new Cell(10, 10);
+                else if (i == mapMAX)
+                    if (cells[i-1][j].info != "" || cells[i][j-1].info != "" || cells[i][j+1].info != "")
+                        if (rng.nextInt(i) == 0)
+                            cells[i][j] = new Cell(10, 10);
+                if (j == 0)
+                    if (cells[i-1][j].info != "" || cells[i+1][j].info != "" || cells[i][j+1].info != "")
+                        if (rng.nextInt(i) == 0)
+                            cells[i][j] = new Cell(10, 10);
+                else if (j == mapMAX)
+                    if (cells[i-1][j].info != "" || cells[i+1][j].info != "" || cells[i][j-1].info != "")
+                        if (rng.nextInt(i) == 0)
+                            cells[i][j] = new Cell(10, 10);
             }
 
         //refreshMap(); // i dont think this needs to be here, cause it has to load at the very end anyway, after cell is loaded
