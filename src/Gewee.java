@@ -40,6 +40,10 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     JPanel menuConsole = new JPanel();
     JTextField menuConsoleCommand;
 
+    // stats ui
+    JPanel menuStats = new JPanel();
+    JLabel statsHealth;
+
     int mapX = 0, mapY = 0, mapMAX = 4;
     JPanel menuMap = new JPanel();
     JLabel[][] mapCells = new JLabel[mapMAX][mapMAX];
@@ -70,6 +74,16 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         menuConsole.setBounds(0, 720-(720/3), 1280-(1280/2), 720-(720/3));
         menuConsole.setVisible(console.isOpen);
         menuConsole.setBackground(Color.GRAY);
+
+        // stats menu (maybe make only popup, or should i always keep up, at least some of it)
+        menuStats.setLayout(null);
+        menuStats.setBounds(1280-(1280/5), 256, 256, 256);
+        menuStats.setBackground(new Color(0, 0, 0, 100));
+        menuStats.setVisible(true);
+        menuStats.setFont(new Font("Serif", Font.PLAIN, 32));
+        statsHealth = new JLabel("Health: ");
+        statsHealth.setBounds(0, 0, 256, 32);
+        menuStats.add(statsHealth);
 
         // minimap
         menuMap.setLayout(null);
@@ -126,10 +140,12 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         add(menu, 2, 0);
         add(pause, 3, 0); // make this esc menu at some point
         add(menuMap, 4, 0);
-        add(menuConsole, 5, 0);
+        add(menuStats, 5, 0);
+        add(menuConsole, 6, 0);
 
         //genMap(); // first, wait
         loadCell(cells[mapX][mapY], false); // so it has something to read
+        cells[0][0].discover(); // put here, discover at the beginning, you start here
         refreshMap();
     }
 
@@ -144,6 +160,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             if (pickups[i].x != -1 && pickups[i].ID != 0) // i think 1 of these is redundant
                 pickups[i].reDraw();
         }
+        statsHealth.setText("Health: " + player.health);
     }
 
     public void tick() {
@@ -258,7 +275,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             player.x = 1280;
             mapX--;
             changedCell = true;
-        } else if (player.x > 1280 && mapX < mapMAX) {
+        } else if (player.x > 1280 && mapX < mapMAX-1) { // should be minus one, because of index mis-allign
             player.x = 0;
             mapX++;
             changedCell = true;
@@ -266,7 +283,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             player.y = 720;
             mapY--;
             changedCell = true;
-        } else if (player.y > 720 && mapY < mapMAX) { // if "<=" will go to MAX++
+        } else if (player.y > 720 && mapY < mapMAX-1) { // if "<=" will go to MAX++
             player.y = 0;
             mapY++;
             changedCell = true;
