@@ -8,6 +8,7 @@ public class Cell {
     int CELL_SIZE = 22;
     int chanceItem;
     int chanceEntity;
+    int chancePickup;
     Object[] objects = new Object[MAX_STUFF];
     Enemy[] enemies = new Enemy[MAX_STUFF];
     Pickup[] pickups = new Pickup[MAX_STUFF];
@@ -22,15 +23,17 @@ public class Cell {
         chanceEntity = 10;
     }
 
-    public Cell(int ci, int ce) {
+    public Cell(int ci, int ce, int cp) {
         info = "";
         chanceItem = ci;
         chanceEntity = ce;
+        chancePickup = cp;
 
         // set objects to new, because i guess making array doesnt work
         for (int i = 0; i < objects.length; i++) {
             objects[i] = new Object();
             enemies[i] = new Enemy();
+            pickups[i] = new Pickup();
         }
         spawnStuff();
     }
@@ -70,6 +73,10 @@ public class Cell {
             if (rng.nextInt(99) < chanceEntity) {
                 enemies[i] = new Enemy(rng.nextInt(1280), rng.nextInt(720), 5, "e");
                 infoAdd("e");
+            }
+            if (rng.nextInt(99) < chancePickup) {
+                pickups[i] = PICKUPS.spawnPickupRandom(rng.nextInt(1280), rng.nextInt(720));
+                infoAdd("p");
             }
         }
     }

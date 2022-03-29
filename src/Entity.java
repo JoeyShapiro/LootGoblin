@@ -10,6 +10,10 @@ public class Entity {
     int velocityY;
     JLabel sprite;
 
+    int health;
+    int mana;
+
+
     Entity() {
         x = -1;
         y = -1;
@@ -26,6 +30,7 @@ public class Entity {
         velocityY = 0;
         speed = sp;
         sprite = new JLabel(new ImageIcon(s));
+        health = 100;
     }
 
     Entity(int nx, int ny, int sp, String s) {
@@ -35,6 +40,7 @@ public class Entity {
         velocityY = 0;
         speed = sp;
         sprite = new JLabel(s);
+        health = 100;
     }
 
     public int getX() { return x; }

@@ -48,7 +48,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     int MAX_STUFF = 16;
     Object[] objects = new Object[MAX_STUFF]; // i do need to load it, so i can load the sprites into panel, otherwise annoyting..?
     Enemy[] enemies = new Enemy[MAX_STUFF]; // i could gimmick it, but that looks bad and is not as fun. (all cells have same amt so keep 16 in panel and change location)
-
+    Pickup[] pickups = new Pickup[MAX_STUFF];
 
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
@@ -78,7 +78,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         int menuCellSize = 256/mapMAX;
         for (int i=0; i<mapMAX; i++)
             for(int j=0; j<mapMAX; j++) {
-                cells[i][j] = new Cell(10, 10); // have to do it first, and this is efficient, rather than another loop
+                cells[i][j] = new Cell(10, 10, 10); // have to do it first, and this is efficient, rather than another loop
                 mapCells[i][j] = new JLabel(cells[i][j].infoGet(), SwingConstants.CENTER); // also sets player pos
                 mapCells[i][j].setBounds(menuCellSize*i, menuCellSize*j, menuCellSize, menuCellSize);
                 menuMap.add(mapCells[i][j]);
@@ -216,26 +216,26 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     // function to randomly generate the map
     public void genMap() { // i need to mapCells too, RIGHT this function can take time because it only happens once
         Random rng = new Random();
-        cells[0][0] = new Cell(25, 25); // empty cell (should be empty, but not for testing)
+        cells[0][0] = new Cell(25, 25, 25); // empty cell (should be empty, but not for testing)
         for (int i = 0; i < mapMAX; i++)
             for (int j = 0; j < mapMAX; j++) { // i think this is smart by saving checks, using "gimmick", idk
                 // sliced bread wont work, needs object and create connections in one
                 if (i == 0) // there must be a better way to check
                     if (cells[i+1][j].info != "" || cells[i][j-1].info != "" || cells[i][j+1].info != "")
                         if (rng.nextInt(i) == 0)
-                            cells[i][j] = new Cell(10, 10);
+                            cells[i][j] = new Cell(10, 10, 10);
                 else if (i == mapMAX)
                     if (cells[i-1][j].info != "" || cells[i][j-1].info != "" || cells[i][j+1].info != "")
                         if (rng.nextInt(i) == 0)
-                            cells[i][j] = new Cell(10, 10);
+                            cells[i][j] = new Cell(10, 10, 10);
                 if (j == 0)
                     if (cells[i-1][j].info != "" || cells[i+1][j].info != "" || cells[i][j+1].info != "")
                         if (rng.nextInt(i) == 0)
-                            cells[i][j] = new Cell(10, 10);
+                            cells[i][j] = new Cell(10, 10, 10);
                 else if (j == mapMAX)
                     if (cells[i-1][j].info != "" || cells[i+1][j].info != "" || cells[i][j-1].info != "")
                         if (rng.nextInt(i) == 0)
-                            cells[i][j] = new Cell(10, 10);
+                            cells[i][j] = new Cell(10, 10, 10);
             }
 
         //refreshMap(); // i dont think this needs to be here, cause it has to load at the very end anyway, after cell is loaded
@@ -277,16 +277,19 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             for (int i = 0; i < MAX_STUFF; i++) {
                 game.remove(objects[i].sprite);
                 game.remove(enemies[i].sprite);
+                game.remove(pickups[i].sprite);
             }
 
         // use new cell stuff
         objects = cell.objects;
         enemies = cell.enemies;
+        pickups = cell.pickups;
 
         // load new stuff
         for (int i = 0; i < MAX_STUFF; i++) {
             game.add(objects[i].sprite);
             game.add(enemies[i].sprite);
+            game.add(pickups[i].sprite);
         }
     }
 
