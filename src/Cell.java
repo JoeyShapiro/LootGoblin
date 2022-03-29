@@ -75,7 +75,7 @@ public class Cell {
                 infoAdd("e");
             }
             if (rng.nextInt(99) < chancePickup) {
-                pickups[i] = PICKUPS.spawnPickupRandom(rng.nextInt(1280), rng.nextInt(720));
+                pickups[i] = PICKUPS.spawnPickupRandom(rng.nextInt(1280), rng.nextInt(720)); // gives "bound must be positive"
                 infoAdd("p");
             }
         }

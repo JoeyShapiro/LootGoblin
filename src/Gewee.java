@@ -141,6 +141,8 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 objects[i].reDraw();
             if (enemies[i].x != -1)
                 enemies[i].reDraw();
+            if (pickups[i].x != -1 && pickups[i].ID != 0) // i think 1 of these is redundant
+                pickups[i].reDraw();
         }
     }
 
@@ -190,6 +192,13 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                     System.out.println("Inventory is full");
                 }
                 refreshInv(); // just need gui
+                return; // so you dont pick up multiple
+            }
+            if (player.isNextTo(pickups[i].sprite) && pickups[i].ID != 0) {
+                System.out.println("Pickuped: " + pickups[i].name);
+                pickups[i].actOnEntity(player);
+                pickups[i].sprite.setText(""); // has to be first, otherwise it "sticks"
+                pickups[i] = new Pickup();
                 return; // so you dont pick up multiple
             }
         }
@@ -245,19 +254,19 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         //cells[mapX][mapY].info = "?"; // smart, maybe come back to, caused issue
         boolean changedCell = false; // should i load the cell or just do cell.doStuff(), objects = cell.objects would be fun, but cell.reDraw seems btr
 
-        if (player.x < 0 && mapX >= 0) { // maybe make block size
+        if (player.x < 0 && mapX > 0) { // maybe make block size
             player.x = 1280;
             mapX--;
             changedCell = true;
-        } else if (player.x > 1280 && mapX <= mapMAX) {
+        } else if (player.x > 1280 && mapX < mapMAX) {
             player.x = 0;
             mapX++;
             changedCell = true;
-        } else if (player.y < 0 && mapY >= 0) {
+        } else if (player.y < 0 && mapY > 0) { // should not be ">="
             player.y = 720;
             mapY--;
             changedCell = true;
-        } else if (player.y > 720 && mapY <= mapMAX) {
+        } else if (player.y > 720 && mapY < mapMAX) { // if "<=" will go to MAX++
             player.y = 0;
             mapY++;
             changedCell = true;
