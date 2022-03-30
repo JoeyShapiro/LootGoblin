@@ -92,7 +92,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         int menuCellSize = 256/mapMAX;
         for (int i=0; i<mapMAX; i++)
             for(int j=0; j<mapMAX; j++) {
-                cells[i][j] = new Cell(10, 10, 10); // have to do it first, and this is efficient, rather than another loop
+                cells[i][j] = new Cell(); // have to do it first, and this is efficient, rather than another loop
                 mapCells[i][j] = new JLabel(cells[i][j].infoGet(), SwingConstants.CENTER); // also sets player pos
                 mapCells[i][j].setBounds(menuCellSize*i, menuCellSize*j, menuCellSize, menuCellSize);
                 menuMap.add(mapCells[i][j]);
@@ -143,7 +143,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         add(menuStats, 5, 0);
         add(menuConsole, 6, 0);
 
-        //genMap(); // first, wait
+        genMap(); // first, wait
         loadCell(cells[mapX][mapY], false); // so it has something to read
         cells[0][0].discover(); // put here, discover at the beginning, you start here
         refreshMap();
@@ -243,27 +243,40 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     public void genMap() { // i need to mapCells too, RIGHT this function can take time because it only happens once
         Random rng = new Random();
         cells[0][0] = new Cell(25, 25, 25); // empty cell (should be empty, but not for testing)
+        int CELLS_THRESH = 8;
+        int cells_cnt = 0;
         for (int i = 0; i < mapMAX; i++)
             for (int j = 0; j < mapMAX; j++) { // i think this is smart by saving checks, using "gimmick", idk
                 // sliced bread wont work, needs object and create connections in one
-                if (i == 0) // there must be a better way to check
-                    if (cells[i+1][j].info != "" || cells[i][j-1].info != "" || cells[i][j+1].info != "")
-                        if (rng.nextInt(i) == 0)
-                            cells[i][j] = new Cell(10, 10, 10);
-                else if (i == mapMAX)
-                    if (cells[i-1][j].info != "" || cells[i][j-1].info != "" || cells[i][j+1].info != "")
-                        if (rng.nextInt(i) == 0)
-                            cells[i][j] = new Cell(10, 10, 10);
-                if (j == 0)
-                    if (cells[i-1][j].info != "" || cells[i+1][j].info != "" || cells[i][j+1].info != "")
-                        if (rng.nextInt(i) == 0)
-                            cells[i][j] = new Cell(10, 10, 10);
-                else if (j == mapMAX)
-                    if (cells[i-1][j].info != "" || cells[i+1][j].info != "" || cells[i][j-1].info != "")
-                        if (rng.nextInt(i) == 0)
-                            cells[i][j] = new Cell(10, 10, 10);
-            }
+                boolean up = false;
+                boolean down = false;
+                boolean left = false;
+                boolean right = false;
 
+                if (i > 0 && cells[i-1][j].info != "") // so smart, first check if can, then check if is, abuses order of ifs
+                    up = true;
+                if (i < mapMAX-1 && cells[i+1][j].info != "")
+                    down = true;
+                if (j > 0 && cells[i][j-1].info != "")
+                    left = true;
+                if (j < mapMAX-1 && cells[i][j+1].info != "")
+                    right = true;
+                
+                if (up || down || left || right)
+                    for (int k = 0; k < i; k++) // increase chances as it goes through loop
+                        if (rng.nextInt(i+1) == 0) {// cant be "0" kinda dumb
+                            cells[i][j] = new Cell(10, 10, 10);
+                            cells_cnt++;
+                        }  
+            }
+        // check if there are enough cells
+        if (cells_cnt < CELLS_THRESH) { // is this bad
+            System.out.println("Too few cells, re-genning");
+            genMap();
+        }
+        // check for path to end
+        System.out.println("Generated map");
+        // then here create different cells based on its neighbors
         //refreshMap(); // i dont think this needs to be here, cause it has to load at the very end anyway, after cell is loaded
     }
 
@@ -272,9 +285,9 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         boolean changedCell = false; // should i load the cell or just do cell.doStuff(), objects = cell.objects would be fun, but cell.reDraw seems btr
 
         if (player.x < 0 && mapX > 0) { // maybe make block size
-            player.x = 1280;
-            mapX--;
-            changedCell = true;
+            player.x = 0; //1280; // you cant go left anymore
+            //mapX--;
+            //changedCell = true;
         } else if (player.x > 1280 && mapX < mapMAX-1) { // should be minus one, because of index mis-allign
             player.x = 0;
             mapX++;
@@ -325,6 +338,8 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 mapCells[i][j].setText(cells[i][j].infoGet());
                 if (i == mapX && j == mapY) // smart
                     mapCells[i][j].setText("@");
+                if (i < mapX) // shows you cant go to these locations anymore. maybe do grey
+                    mapCells[i][j].setForeground(Color.RED);
             }
     }
 }
