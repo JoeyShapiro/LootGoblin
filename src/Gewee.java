@@ -262,11 +262,21 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 if (j < mapMAX-1 && cells[i][j+1].info != "")
                     right = true;
                 
-                if (up || down || left || right)
+                if (up || down || left || right) // maybe make if all are true, then higher chance
                     for (int k = 0; k < i; k++) // increase chances as it goes through loop
-                        if (rng.nextInt(i+1) == 0) {// cant be "0" kinda dumb
-                            cells[i][j] = new Cell(10, 10, 10);
+                        if (rng.nextInt(i+1) == 0) { // cant be "0" kinda dumb
+                            int cid = 0;
+                            if (up)
+                                cid+=8;
+                            if (down) // as of now (in mapCells) this may always be false
+                                cid+=4;
+                            if(left)
+                                cid+=2;
+                            if(right)
+                                cid+=1;
+                            cells[i][j] = new Cell(10, 10, 10);// CELLS.map(cells[i][j], up, down left, right);
                             cells_cnt++;
+                            break; // break if already created cell? so it doesnt recreate
                         }  
             }
         // check if there are enough cells
