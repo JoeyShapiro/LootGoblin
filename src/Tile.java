@@ -31,4 +31,8 @@ public class Tile {
     public void actOnEntity(Entity e) {
         acton.accept(e);
     }
+
+    public Tile cloneDeep() {
+        return new Tile(x, y, sprite.getText(), acton); // smarter :)
+    }
 }

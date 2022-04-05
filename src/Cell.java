@@ -38,6 +38,22 @@ public class Cell {
         spawnStuff();
     }
 
+    public Cell(int ci, int ce, int cp, Tile[][] nts) { // do i say if boss, or isEnd, or just add special object, good questions
+        info = "";
+        chanceItem = ci;
+        chanceEntity = ce;
+        chancePickup = cp;
+        tiles = nts;
+
+        // set objects to new, because i guess making array doesnt work
+        for (int i = 0; i < objects.length; i++) {
+            objects[i] = new Object();
+            enemies[i] = new Enemy();
+            pickups[i] = new Pickup();
+        }
+        spawnStuff();
+    }
+
     public void infoAdd(String learned) {
         if (info.contains(learned)) // if the character is already there, dont readd it.
             return;
@@ -107,5 +123,9 @@ public class Cell {
         // }
 
         return false;
+    }
+
+    public Cell cloneDeep() {
+        return new Cell(chanceItem, chanceEntity, chancePickup, tiles);
     }
 }
