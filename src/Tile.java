@@ -20,6 +20,12 @@ public class Tile {
         acton = a;
     }
 
+    public Tile(String s, Consumer<Entity> a, boolean ic) {
+        x = -1; y = -1;
+        sprite = new JLabel(s);
+        isCollidable = ic;
+    }
+
     public void setPos(int nx, int ny) {
         sprite.setBounds(nx, ny, 32, 32);
     }

@@ -5,14 +5,15 @@ public class Cell {
     int y;
 
     int MAX_STUFF = 16;
-    int CELL_SIZE = 22;
+    int CELL_HEIGHT = 22;
+    int CELL_WIDTH = 32;
     int chanceItem;
     int chanceEntity;
     int chancePickup;
     Object[] objects = new Object[MAX_STUFF];
     Enemy[] enemies = new Enemy[MAX_STUFF];
     Pickup[] pickups = new Pickup[MAX_STUFF];
-    Tile[][] tiles = new Tile[CELL_SIZE][CELL_SIZE];
+    Tile[][] tiles = new Tile[CELL_WIDTH][CELL_HEIGHT];
     String info;
     boolean discovered = false;// cheaper find, think false is redundant
     Player player;
@@ -21,6 +22,10 @@ public class Cell {
         info = "";
         chanceItem = 10;
         chanceEntity = 10;
+    }
+
+    public Cell(boolean dummy) { // find a better way, see to use null
+        info = "dummy";
     }
 
     public Cell(int ci, int ce, int cp) {

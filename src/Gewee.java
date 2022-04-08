@@ -53,6 +53,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     Object[] objects = new Object[MAX_STUFF]; // i do need to load it, so i can load the sprites into panel, otherwise annoyting..?
     Enemy[] enemies = new Enemy[MAX_STUFF]; // i could gimmick it, but that looks bad and is not as fun. (all cells have same amt so keep 16 in panel and change location)
     Pickup[] pickups = new Pickup[MAX_STUFF];
+    Tile[][] tiles = new Tile[32][22];
 
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
@@ -144,6 +145,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         add(menuConsole, 6, 0);
 
         genMap(); // first, wait
+        mapCells(); // needs this, otherwise does a crazy rng crash, want to know why
         loadCell(cells[mapX][mapY], false); // so it has something to read
         cells[0][0].discover(); // put here, discover at the beginning, you start here
         refreshMap();
@@ -159,6 +161,11 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 enemies[i].reDraw();
             if (pickups[i].x != -1 && pickups[i].ID != 0) // i think 1 of these is redundant
                 pickups[i].reDraw();
+        }
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < 22; j++) {
+                tiles[i][j].setPos(i*32, j*32);
+            }
         }
         statsHealth.setText("Health: " + player.health);
     }
@@ -254,27 +261,18 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 boolean right = false;
 
                 if (i > 0 && cells[i-1][j].info != "") // so smart, first check if can, then check if is, abuses order of ifs
-                    up = true;
-                if (i < mapMAX-1 && cells[i+1][j].info != "")
-                    down = true;
-                if (j > 0 && cells[i][j-1].info != "")
                     left = true;
-                if (j < mapMAX-1 && cells[i][j+1].info != "")
+                if (i < mapMAX-1 && cells[i+1][j].info != "")
                     right = true;
-                
+                if (j > 0 && cells[i][j-1].info != "")
+                    up = true;
+                if (j < mapMAX-1 && cells[i][j+1].info != "")
+                    down = true;
+
                 if (up || down || left || right) // maybe make if all are true, then higher chance
                     for (int k = 0; k < i; k++) // increase chances as it goes through loop
                         if (rng.nextInt(i+1) == 0) { // cant be "0" kinda dumb
-                            int cid = 0;
-                            if (up)
-                                cid+=8;
-                            if (down) // as of now (in mapCells) this may always be false
-                                cid+=4;
-                            if(left)
-                                cid+=2;
-                            if(right)
-                                cid+=1;
-                            cells[i][j] = new Cell(10, 10, 10);// CELLS.map(cells[i][j], up, down left, right);
+                            cells[i][j] = new Cell(true);// CELLS.map(cells[i][j], up, down left, right);
                             cells_cnt++;
                             break; // break if already created cell? so it doesnt recreate
                         }  
@@ -282,12 +280,39 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         // check if there are enough cells
         if (cells_cnt < CELLS_THRESH) { // is this bad
             System.out.println("Too few cells, re-genning");
-            genMap();
+            genMap(); // find way to not print after if fails
+            return; // does this work. it does
         }
         // check for path to end
-        System.out.println("Generated map");
+        System.out.println("Generated map, " + cells_cnt + " cells");
         // then here create different cells based on its neighbors
         //refreshMap(); // i dont think this needs to be here, cause it has to load at the very end anyway, after cell is loaded
+    }
+
+    public void mapCells() { // actually load the cell types, now that they are created and connected. seems smarter and less probs than all at once
+        for (int i = 0; i < mapMAX; i++)
+            for (int j = 0; j < mapMAX; j++) { // i think this is smart by saving checks, using "gimmick", idk
+                // sliced bread wont work, needs object and create connections in one
+                if (cells[i][j].info == "") // check if it exists first
+                    continue;
+
+                boolean up = false; // i and j are reversed i think
+                boolean down = false;
+                boolean left = false;
+                boolean right = false;
+
+                if (i > 0 && cells[i-1][j].info != "") // so smart, first check if can, then check if is, abuses order of ifs
+                    left = true;
+                if (i < mapMAX-1 && cells[i+1][j].info != "")
+                    right = true;
+                if (j > 0 && cells[i][j-1].info != "")
+                    up = true;
+                if (j < mapMAX-1 && cells[i][j+1].info != "")
+                    down = true;
+                
+                cells[i][j] = CELLS.getCell(up, down, left, right);
+            }
+        System.out.println("Mapped cells");
     }
 
     public void checkCell() {
@@ -322,23 +347,35 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
 
     public void loadCell(Cell cell, boolean isReload) {
         // unload old stuff
-        if (isReload) // if removing old assets, ie. not on startup
+        if (isReload) { // if removing old assets, ie. not on startup
             for (int i = 0; i < MAX_STUFF; i++) {
                 game.remove(objects[i].sprite);
                 game.remove(enemies[i].sprite);
                 game.remove(pickups[i].sprite);
             }
+            for (int i = 0; i < 32; i++) {
+                for (int j = 0; j < 22; j++) {
+                    game.remove(tiles[i][j].sprite);
+                }
+            }
+        }
 
         // use new cell stuff
         objects = cell.objects;
         enemies = cell.enemies;
         pickups = cell.pickups;
+        tiles = cell.tiles;
 
         // load new stuff
         for (int i = 0; i < MAX_STUFF; i++) {
             game.add(objects[i].sprite);
             game.add(enemies[i].sprite);
             game.add(pickups[i].sprite);
+        }
+        for (int i = 0; i < 32; i++) {
+            for (int j = 0; j < 22; j++) {
+                game.add(tiles[i][j].sprite);
+            }
         }
     }
 
