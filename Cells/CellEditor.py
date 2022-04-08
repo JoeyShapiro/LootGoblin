@@ -6,7 +6,7 @@ from numpy import asarray
   
 # load the image and convert into 
 # numpy array
-img = Image.open('Cells/CID-1.png') # only png works, jpg causes '?', guessing png to jpg convert, oh well \_-_-_/
+img = Image.open('Cells/CID-15.png') # only png works, jpg causes '?', guessing png to jpg convert, oh well \_-_-_/
 numpydata = asarray(img) # do each by hand, or add all then separate, maybe later, '*' for all, but is that by hand or built, to get all and diplay
 matrix = []
 cell = ['{']
