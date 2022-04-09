@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -39,7 +40,10 @@ public class Entity {
         velocityX = 0;
         velocityY = 0;
         speed = sp;
-        sprite = new JLabel(s);
+        if (new File(s).exists())
+            sprite = new JLabel(new ImageIcon(s)); // should i accept string or image
+        else
+            sprite = new JLabel(s);
         health = 100;
     }
 
@@ -76,9 +80,9 @@ public class Entity {
     }
 
     // is Colliding, but i like the name better :P
-    public boolean isTouchingOrWorse(Entity that) {
-        if (this.x+32 >= that.x && this.x-32 <= that.x)
-            if (this.y+32 >= that.y && this.y-32 <= that.y)
+    public boolean isTouchingOrWorse(JLabel that) {
+        if (this.x+32 >= that.getX() && this.x-32 <= that.getX())
+            if (this.y+32 >= that.getY() && this.y-32 <= that.getY())
                 return true;
 
         return false;

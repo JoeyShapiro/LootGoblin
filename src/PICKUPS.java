@@ -6,9 +6,9 @@ public class PICKUPS {
 
     private static Pickup[] LIST_PICKUPS = { // should i do something without x,y. this is fine
         new Pickup(),
-        new Pickup(lid++, "Teleport", "t", e -> {e.x = rng.nextInt(1280); e.y = rng.nextInt(720); 
+        new Pickup(lid++, "Teleport", "./res/teleport.png", e -> {e.x = rng.nextInt(1280); e.y = rng.nextInt(720); 
             System.out.println("Teleported entity to : (" + e.x + ", " + e.y + ")");}),
-        new Pickup(lid++, "Health", "h", e -> {e.health += 5; 
+        new Pickup(lid++, "Health", "./res/health.png", e -> {e.health += 5; 
             System.out.println("Healed entity for 5");})
     };
 

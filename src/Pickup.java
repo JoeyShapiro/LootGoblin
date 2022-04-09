@@ -1,4 +1,7 @@
+import java.io.File;
 import java.util.function.Consumer;
+
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class Pickup { // im not sure if i should do () here, or in main, but this is more fun :P
@@ -25,7 +28,19 @@ public class Pickup { // im not sure if i should do () here, or in main, but thi
         x = -1;
         y = -1;
         name = n;
-        sprite = new JLabel(s);
+        if (new File(s).exists())
+            sprite = new JLabel(new ImageIcon(s)); // should i accept string or image
+        else
+            sprite = new JLabel(s);
+        acton = a;
+        ID = id; // forgot this one
+    }
+
+    public Pickup(int id, String n, JLabel s, Consumer<Entity> a) {
+        x = -1;
+        y = -1;
+        name = n;
+        sprite = s;
         acton = a;
         ID = id; // forgot this one
     }
@@ -41,6 +56,6 @@ public class Pickup { // im not sure if i should do () here, or in main, but thi
     public void reDraw() { setPos(x, y); }
 
     public Pickup cloneDeep() {
-        return new Pickup(ID, name, sprite.getText(), acton); // smarter :)
+        return new Pickup(ID, name, sprite, acton); // smarter :)
     }
 }

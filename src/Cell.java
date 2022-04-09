@@ -92,7 +92,7 @@ public class Cell {
                 infoAdd("i");
             }
             if (rng.nextInt(99) < chanceEntity) {
-                enemies[i] = new Enemy(rng.nextInt(1280), rng.nextInt(720), 5, "e");
+                enemies[i] = new Enemy(rng.nextInt(1280), rng.nextInt(720), 5, "./res/enemy.png");
                 infoAdd("e");
             }
             if (rng.nextInt(99) < chancePickup) {
@@ -107,6 +107,13 @@ public class Cell {
         player = p;
         player.x += player.velocityX; // change to player.tick
         player.y += player.velocityY;
+        for (int i = 0; i < CELL_WIDTH; i++) // change to entity level, or combne with tile or something, idk
+            for (int j = 0; j < CELL_HEIGHT; j++)
+                if (tiles[i][j].isCollidable && player.isTouchingOrWorse(tiles[i][j].sprite)) { // check for least first :P
+                    player.x -= player.velocityX; // simple fix, i never really got this sutff
+                    player.y -= player.velocityY;
+                    return;
+                }
         for (Enemy enemy : enemies)
             enemy.act(this); // needs this for collisions and stuff
     }

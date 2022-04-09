@@ -131,7 +131,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         menu.add(menuInventory);
         game.setBackground(Color.GREEN); // if opaque, no color
         
-        player = new Player(0, 0, 5, ImageIO.read(new File("res/player.png")));
+        player = new Player(512, 512, 5, ImageIO.read(new File("res/player.png")));
         game.add(player.getSprite());
 
         // enemy = new Enemy(500, 500, 2, "e");

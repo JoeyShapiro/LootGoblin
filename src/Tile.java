@@ -1,4 +1,7 @@
+import java.io.File;
 import java.util.function.Consumer;
+
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class Tile {
@@ -13,11 +16,15 @@ public class Tile {
         sprite = new JLabel(""); // is this right or should i load by numbers
     }
 
-    public Tile(int nx, int ny, String s, Consumer<Entity> a) {
+    public Tile(int nx, int ny, String s, Consumer<Entity> a, boolean ic) {
         x = nx;
         y = ny;
-        sprite = new JLabel(s);
+        if (new File(s).exists())
+            sprite = new JLabel(new ImageIcon(s)); // should i accept string or image
+        else
+            sprite = new JLabel(s);
         acton = a;
+        isCollidable = ic;
     }
 
     public Tile(String s, Consumer<Entity> a, boolean ic) {
@@ -39,6 +46,6 @@ public class Tile {
     }
 
     public Tile cloneDeep() {
-        return new Tile(x, y, sprite.getText(), acton); // smarter :)
+        return new Tile(x, y, sprite.getText(), acton, isCollidable); // smarter :)
     }
 }

@@ -1,8 +1,8 @@
 public class TILES {
     private static Tile[] LIST_TILES = { // should i do something without x,y. this is fine
         new Tile(),
-        new Tile("f", null, false), // floor
-        new Tile("w", null, true) // wall
+        new Tile("./res/floor.png", null, false), // floor, uses clone deep, so when creates checks for taht file, big coding interesting
+        new Tile("./res/wall.png", null, true) // wall
     };
 
     public static Tile getTile(int id) {
