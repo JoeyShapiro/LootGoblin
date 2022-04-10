@@ -344,10 +344,10 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         boolean changedCell = false; // should i load the cell or just do cell.doStuff(), objects = cell.objects would be fun, but cell.reDraw seems btr
 
         if (player.x < 0 && mapX > 0) { // maybe make block size
-            player.x = 1280; // you cant go left anymore
+            player.x = 1024; // you cant go left anymore
             mapX--;
             changedCell = true;
-        } else if (player.x > 1280 && mapX < mapMAX-1) { // should be minus one, because of index mis-allign
+        } else if (player.x > 1024 && mapX < mapMAX-1) { // should be minus one, because of index mis-allign
             player.x = 0;
             mapX++;
             changedCell = true;

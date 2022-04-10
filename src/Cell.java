@@ -150,14 +150,14 @@ public class Cell {
                 foundPos = true;
         }
 
-        exit.setPos(x*CELL_WIDTH, y*CELL_HEIGHT);
+        exit.setPos(x*32, y*32); // why was this x*CELL_WIDTH, just why
         for (int i = 0; i < MAX_STUFF; i++)
             if (pickups[i].ID == 0) {
                 pickups[i] = exit;
                 break;
             }
         infoAdd("D"); // door?
-        System.out.println(String.format("at (%d, %d)", x*CELL_WIDTH, y*CELL_HEIGHT)); // i dont like this type
+        System.out.println(String.format("at (%d, %d)", x*32, y*32)); // i dont like this type
 
     }
 
