@@ -13,6 +13,7 @@ public class Entity {
 
     int health;
     int mana;
+    int gold;
 
     Entity() {
         x = -1;
@@ -31,6 +32,8 @@ public class Entity {
         speed = sp;
         sprite = new JLabel(new ImageIcon(s));
         health = 100;
+        gold = 0;
+        mana = 100;
     }
 
     Entity(int nx, int ny, int sp, String s) {

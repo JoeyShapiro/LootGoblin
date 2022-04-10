@@ -9,7 +9,8 @@ public class PICKUPS {
         new Pickup(lid++, "Teleport", "./res/teleport.png", e -> {e.x = rng.nextInt(1280); e.y = rng.nextInt(720); 
             System.out.println("Teleported entity to : (" + e.x + ", " + e.y + ")");}),
         new Pickup(lid++, "Health", "./res/health.png", e -> {e.health += 5; 
-            System.out.println("Healed entity for 5");}) // cant have exit here, could spawn at random. could rng.next(lid-1)
+            System.out.println("Healed entity for 5");}), // cant have exit here, could spawn at random. could rng.next(lid-1)
+        new Pickup(lid++, "Coin Purse", "c", e -> { e.gold += 10; })
     };
 
     public static Pickup getPickup(int id) {

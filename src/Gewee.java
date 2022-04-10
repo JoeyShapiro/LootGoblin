@@ -43,7 +43,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
 
     // stats ui
     JPanel menuStats = new JPanel();
-    JLabel statsHealth;
+    JLabel stats;
 
     int mapX = 0, mapY = 0, mapMAX = 4;
     JPanel menuMap = new JPanel();
@@ -89,9 +89,9 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         menuStats.setBackground(new Color(0, 0, 0, 100));
         menuStats.setVisible(true);
         menuStats.setFont(new Font("Serif", Font.PLAIN, 32));
-        statsHealth = new JLabel("Health: ");
-        statsHealth.setBounds(0, 0, 256, 32);
-        menuStats.add(statsHealth);
+        stats = new JLabel("Health: ");
+        stats.setBounds(0, 0, 256, 256);
+        menuStats.add(stats);
 
         // minimap
         menuMap.setLayout(null);
@@ -181,7 +181,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 tiles[i][j].setPos(i*32, j*32);
             }
         }
-        statsHealth.setText("Health: " + player.health);
+        stats.setText("<html><div style=''>Health: " + player.health + "<br>" + "Mana: " + player.mana + "<br>" + "Gold: " + player.gold + "</div></html>");
     }
 
     public void tick() {
