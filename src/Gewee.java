@@ -1,4 +1,5 @@
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -123,7 +124,11 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             }
         menuItemHeld.setVisible(false);
         menuItemHeld.setSize(32, 32);
+        JLabel invDrop = new JLabel(new ImageIcon("./res/drop.png"));
+        invDrop.setBounds(512, 412, 188, 100);
+        invDrop.setBorder(BorderFactory.createBevelBorder(1));
         menuInventory.add(invBackplate, 1, 0/*, BorderLayout.WEST*/);
+        menuInventory.add(invDrop, 2, 0);
         menuInventory.add(menuItemHeld, 3, 0);
         menuInventory.setSize(700, 512);
         menuInventory.setBackground(Color.LIGHT_GRAY);
@@ -235,7 +240,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             if (player.isNextTo(pickups[i].sprite) && pickups[i].ID != 0) {
                 System.out.println("Pickuped: " + pickups[i].name);
                 pickups[i].actOnEntity(player);
-                if (pickups[i].ID == -1) // right, dont remove, because of how it goes back after done, fixes problem on l436
+                if (pickups[i].ID < 0) // right, dont remove, because of how it goes back after done, fixes problem on l436. make less than 0, that way wont pickup shop or others either, fixes shop problem
                     return; // right, otherwise it would remove it right after it placed new one, cause the stack thing
                 game.remove(pickups[i].sprite); // has be first, otherwise "sticks". this way makes smart
                 pickups[i] = new Pickup();
@@ -333,6 +338,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
 
     public void genShop() {
         cells[0][0] = CELLS.getCell(false, false, false, false); // good for now, CELLS.SPECIALS(SHOP)
+        createAH();
     }
 
     public void genBoss() {
@@ -475,5 +481,19 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             refreshMap();
         }
         System.out.println("loaded new level");
+    }
+
+    public void createAH() { // auction house (merchant, seller, shop, ...)
+        Pickup shop = new Pickup(-2, "auction house", "./res/ah.png", e -> { shop(); }); // has to be redefined
+
+        cells[mapX][mapY].placeAH(shop);
+    }
+
+    public void shop() {
+        for (int i = 0; i < MAX_STUFF; i++)
+            if (objects[i].item.ID == 0) {
+                player.gold += objects[i].item.price;
+                objects[i] = new Object();
+        }
     }
 }

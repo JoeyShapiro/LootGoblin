@@ -53,7 +53,7 @@ public class KbmListener implements KeyListener, MouseInputListener {
         int x = e.getX(); // i think this is more efficient
         int y = e.getY()-gui.WHAT; // deal with whatever that is
         // check if in inventory
-        if (gui.inventory.isOpen && x > 300 && x < 1000 && y > 100 && y < 612) {
+        if (gui.inventory.isOpen && x > 300 && x < 812 && y > 100 && y < 612) { // this was x<100 & y<612, to big, how did i not notice
             // im clever, this will get the item place in inv, seems convoluded though
             int invX = gui.inventory.getInvX(x); // super confusing, must write down
             int invY = gui.inventory.getInvY(y); // divison, duh
@@ -72,6 +72,16 @@ public class KbmListener implements KeyListener, MouseInputListener {
             //for (int i=invX; i<itemChanged.width+invX; i++)
             //for(int j=invY; j<itemChanged.height+invY; j++)
             gui.refreshInv();
+        } else if (gui.inventory.itemHeld.ID != 0 && gui.inventory.isOpen && x > 812 && x < 1000 && y > 512 && y < 612) { // find cleaner way to organize
+            for (int i = 0; i < gui.MAX_STUFF; i++) { // make function for this stuff
+                if (gui.objects[i].item.ID == 0) {
+                    gui.objects[i].item = gui.inventory.itemHeld;
+                    gui.inventory.itemHeld = new Item();
+                    gui.objects[i].setPos(gui.player.x, gui.player.y);
+                    gui.menuItemHeld.setVisible(false);
+                    break;
+                }
+            }
         } else { // maybe this way, will fire if inv open and outside space, but might be fine
 
         }

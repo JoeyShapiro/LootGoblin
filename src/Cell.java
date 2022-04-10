@@ -161,6 +161,16 @@ public class Cell {
 
     }
 
+    public void placeAH(Pickup shop) {
+        shop.setPos(16*32, 10*22);
+        for (int i = 0; i < MAX_STUFF; i++)
+            if (pickups[i].ID == 0) {
+                pickups[i] = shop;
+                break;
+            }
+        infoAdd("S"); // door?
+    }
+
     public Cell cloneDeep() {
         return new Cell(chanceItem, chanceEntity, chancePickup, tiles);
     }
