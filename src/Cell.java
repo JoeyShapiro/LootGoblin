@@ -137,6 +137,30 @@ public class Cell {
         return false;
     }
 
+    public void placeExit(Pickup exit) {
+        Random rng = new Random();
+        boolean foundPos = false;
+        int x = 0; // if in loop, gives 0
+        int y = 0;
+
+        while (!foundPos) { // smarter
+            x = rng.nextInt(CELL_WIDTH);
+            y = rng.nextInt(CELL_HEIGHT);
+            if (!tiles[x][y].isCollidable)
+                foundPos = true;
+        }
+
+        exit.setPos(x*CELL_WIDTH, y*CELL_HEIGHT);
+        for (int i = 0; i < MAX_STUFF; i++)
+            if (pickups[i].ID == 0) {
+                pickups[i] = exit;
+                break;
+            }
+        infoAdd("D"); // door?
+        System.out.println(String.format("at (%d, %d)", x*CELL_WIDTH, y*CELL_HEIGHT)); // i dont like this type
+
+    }
+
     public Cell cloneDeep() {
         return new Cell(chanceItem, chanceEntity, chancePickup, tiles);
     }

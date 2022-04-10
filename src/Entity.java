@@ -14,7 +14,6 @@ public class Entity {
     int health;
     int mana;
 
-
     Entity() {
         x = -1;
         y = -1;

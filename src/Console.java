@@ -1,10 +1,12 @@
 public class Console {
     boolean isOpen;
     String[] log;
+    Gewee gui;
 
-    public Console() {
+    public Console(Gewee g) {
         isOpen = false;
         log = new String[6];
+        gui = g;
     }
 
     public String tryRun(String command) {
@@ -19,6 +21,8 @@ public class Console {
             int y = Integer.parseInt(args[3]);
             
             spawnItemAt(id, x, y);
+        } else if (args[0] == "exit") {
+            gui.exit();
         }
 
         return output;

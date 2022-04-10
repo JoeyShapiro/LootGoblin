@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
+import java.util.Stack;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -36,7 +37,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     boolean isPaused = false; // should this be here or somewhere else
     JLabel pause;
 
-    Console console = new Console();
+    Console console = new Console(this);
     JPanel menuConsole = new JPanel();
     JTextField menuConsoleCommand;
 
@@ -54,6 +55,13 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     Enemy[] enemies = new Enemy[MAX_STUFF]; // i could gimmick it, but that looks bad and is not as fun. (all cells have same amt so keep 16 in panel and change location)
     Pickup[] pickups = new Pickup[MAX_STUFF];
     Tile[][] tiles = new Tile[32][22];
+
+    // exit, find better place. maybe redo sprites and stuff
+    //Pickup exit = new Pickup(-1, "exit", "./res/exit.png", e -> { exit(); });
+    Pickup exit;
+    int LVL_CYCLES = 3;
+    Stack<String> levels = new Stack<String>();
+    String curLvl = "";
 
     public Gewee(/* int width, int height */) throws IOException {
         this.setLayout(null);
@@ -144,8 +152,15 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         add(menuStats, 5, 0);
         add(menuConsole, 6, 0);
 
-        genMap(); // first, wait
-        mapCells(); // needs this, otherwise does a crazy rng crash, want to know why
+        // create level stack
+        for (int i = 0; i < LVL_CYCLES; i++) {
+            levels.push("boss"); // reverse order :P
+            levels.push("shop");
+            levels.push("dungeon");
+        }
+
+        exit();
+        createExit();
         loadCell(cells[mapX][mapY], false); // so it has something to read
         cells[0][0].discover(); // put here, discover at the beginning, you start here
         refreshMap();
@@ -221,7 +236,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             if (player.isNextTo(pickups[i].sprite) && pickups[i].ID != 0) {
                 System.out.println("Pickuped: " + pickups[i].name);
                 pickups[i].actOnEntity(player);
-                pickups[i].sprite.setText(""); // has to be first, otherwise it "sticks"
+                game.remove(pickups[i].sprite); // has be first, otherwise "sticks". this way makes smart
                 pickups[i] = new Pickup();
                 return; // so you dont pick up multiple
             }
@@ -315,14 +330,22 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         System.out.println("Mapped cells");
     }
 
+    public void genShop() {
+        cells[0][0] = CELLS.getCell(false, false, false, false); // good for now, CELLS.SPECIALS(SHOP)
+    }
+
+    public void genBoss() {
+        cells[0][0] = CELLS.getCell(false, false, false, false);
+    }
+
     public void checkCell() {
         //cells[mapX][mapY].info = "?"; // smart, maybe come back to, caused issue
         boolean changedCell = false; // should i load the cell or just do cell.doStuff(), objects = cell.objects would be fun, but cell.reDraw seems btr
 
         if (player.x < 0 && mapX > 0) { // maybe make block size
-            player.x = 0; //1280; // you cant go left anymore
-            //mapX--;
-            //changedCell = true;
+            player.x = 1280; // you cant go left anymore
+            mapX--;
+            changedCell = true;
         } else if (player.x > 1280 && mapX < mapMAX-1) { // should be minus one, because of index mis-allign
             player.x = 0;
             mapX++;
@@ -377,6 +400,11 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 game.add(tiles[i][j].sprite);
             }
         }
+
+        // if (exitX == mapX && exitY == mapY) {
+        //     game.add(exit);
+        //     hasExit = true;
+        // }
     }
 
     public void refreshMap() {
@@ -385,8 +413,52 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
                 mapCells[i][j].setText(cells[i][j].infoGet());
                 if (i == mapX && j == mapY) // smart
                     mapCells[i][j].setText("@");
-                if (i < mapX) // shows you cant go to these locations anymore. maybe do grey
-                    mapCells[i][j].setForeground(Color.RED);
+                // if (i < mapX) // shows you cant go to these locations anymore. maybe do grey
+                //     mapCells[i][j].setForeground(Color.RED); // removed this features, no longer needed, proved i did
             }
+    }
+
+    public void createExit() {
+        Random rng = new Random();
+        int exitX;
+        int exitY;
+        exit = new Pickup(-1, "exit", "./res/exit.png", e -> { exit(); }); // has to be redefined
+
+        do {
+            exitX = rng.nextInt(mapMAX);
+            exitY = rng.nextInt(mapMAX);
+        } while (cells[exitX][exitY].info == "");
+        System.out.print(String.format("Created exit at cell [%d, %d] ", exitX, exitY)); // i dont like this type
+        cells[exitX][exitY].placeExit(exit);
+    }
+
+    public void exit() {
+        // zero out
+        mapX = 0; mapY = 0; // reset map loc
+        for (int i = 0; i < mapMAX; i++) {
+            for (int j = 0; j < mapMAX; j++) {
+                cells[i][j] = new Cell();
+            }
+        }
+        //cells = null; // does this work right
+
+        // load new
+        curLvl = levels.pop();
+        System.out.println(curLvl);
+        if (curLvl == "dungeon") {
+            genMap(); // first, wait
+            mapCells(); // needs this, otherwise does a crazy rng crash, want to know why
+        } else if (curLvl == "shop") {
+            genShop();
+            cells[mapX][mapY].infoAdd("s");
+            createExit();
+            cells[mapX][mapY].discover();
+            player.setPos(512, 512);
+            loadCell(cells[mapX][mapY], true);
+            refreshMap();
+        } else if (curLvl == "boss") {
+            //genBoss();
+        }
+        System.out.println("loaded new level");
     }
 }
