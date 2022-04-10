@@ -22,7 +22,7 @@ public class Console {
             
             spawnItemAt(id, x, y);
         } else if (args[0] == "exit") {
-            gui.exit();
+            gui.exit(false);
         }
 
         return output;

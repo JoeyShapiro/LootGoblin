@@ -158,11 +158,11 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             levels.push("dungeon");
         }
 
-        exit();
-        createExit();
-        loadCell(cells[mapX][mapY], false); // so it has something to read
-        cells[0][0].discover(); // put here, discover at the beginning, you start here
-        refreshMap();
+        exit(true);
+        // createExit();
+        // loadCell(cells[mapX][mapY], false); // so it has something to read
+        // cells[0][0].discover(); // put here, discover at the beginning, you start here
+        // refreshMap();
     }
 
     public void reDraw() { // change name, move to Cell
@@ -265,7 +265,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
     // function to randomly generate the map
     public void genMap() { // i need to mapCells too, RIGHT this function can take time because it only happens once
         Random rng = new Random();
-        cells[0][0] = new Cell(25, 25, 25); // empty cell (should be empty, but not for testing)
+        cells[0][0] = new Cell(25, 25, 25); // empty cell (should be empty, but not for testing), had to change for stack
         int CELLS_THRESH = 8;
         int cells_cnt = 0;
         for (int i = 0; i < mapMAX; i++)
@@ -423,7 +423,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         Random rng = new Random();
         int exitX;
         int exitY;
-        Pickup exit = new Pickup(-1, "exit", "./res/exit.png", e -> { exit(); }); // has to be redefined
+        Pickup exit = new Pickup(-1, "exit", "./res/exit.png", e -> { exit(false); }); // has to be redefined
 
         do {
             exitX = rng.nextInt(mapMAX);
@@ -433,7 +433,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         cells[exitX][exitY].placeExit(exit);
     }
 
-    public void exit() { // if placed in PICKUP.Exit causes it to not work, it loads level but loses exit sprite. but it still works hmm
+    public void exit(boolean isFirst) { // if placed in PICKUP.Exit causes it to not work, it loads level but loses exit sprite. but it still works hmm
         // zero out
         mapX = 0; mapY = 0; // reset map loc
         for (int i = 0; i < mapMAX; i++) {
@@ -449,6 +449,14 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         if (curLvl == "dungeon") {
             genMap(); // first, wait
             mapCells(); // needs this, otherwise does a crazy rng crash, want to know why
+            // each one needs this stuff, including dungeon, so place here rather than in gens
+            createExit();
+            if (isFirst) // just put in loadCell
+                loadCell(cells[mapX][mapY], false); // so it has something to read
+            else
+                loadCell(cells[mapX][mapY], true);
+            cells[0][0].discover(); // put here, discover at the beginning, you start here
+            refreshMap();
         } else if (curLvl == "shop") {
             genShop();
             cells[mapX][mapY].infoAdd("s");
