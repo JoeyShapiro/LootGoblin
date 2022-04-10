@@ -75,9 +75,8 @@ public class KbmListener implements KeyListener, MouseInputListener {
         } else if (gui.inventory.itemHeld.ID != 0 && gui.inventory.isOpen && x > 812 && x < 1000 && y > 512 && y < 612) { // find cleaner way to organize
             for (int i = 0; i < gui.MAX_STUFF; i++) { // make function for this stuff
                 if (gui.objects[i].item.ID == 0) {
-                    gui.objects[i].item = gui.inventory.itemHeld;
+                    gui.objects[i] = new Object(gui.inventory.itemHeld, gui.player.x, gui.player.y);
                     gui.inventory.itemHeld = new Item();
-                    gui.objects[i].setPos(gui.player.x, gui.player.y);
                     gui.menuItemHeld.setVisible(false);
                     break;
                 }

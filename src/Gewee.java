@@ -491,7 +491,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
 
     public void shop() {
         for (int i = 0; i < MAX_STUFF; i++)
-            if (objects[i].item.ID == 0) {
+            if (objects[i].item.ID != 0) {
                 player.gold += objects[i].item.price;
                 objects[i] = new Object();
         }
