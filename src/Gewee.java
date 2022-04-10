@@ -58,7 +58,6 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
 
     // exit, find better place. maybe redo sprites and stuff
     //Pickup exit = new Pickup(-1, "exit", "./res/exit.png", e -> { exit(); });
-    Pickup exit;
     int LVL_CYCLES = 3;
     Stack<String> levels = new Stack<String>();
     String curLvl = "";
@@ -236,6 +235,8 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             if (player.isNextTo(pickups[i].sprite) && pickups[i].ID != 0) {
                 System.out.println("Pickuped: " + pickups[i].name);
                 pickups[i].actOnEntity(player);
+                if (pickups[i].ID == -1) // right, dont remove, because of how it goes back after done, fixes problem on l436
+                    return; // right, otherwise it would remove it right after it placed new one, cause the stack thing
                 game.remove(pickups[i].sprite); // has be first, otherwise "sticks". this way makes smart
                 pickups[i] = new Pickup();
                 return; // so you dont pick up multiple
@@ -422,7 +423,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         Random rng = new Random();
         int exitX;
         int exitY;
-        exit = new Pickup(-1, "exit", "./res/exit.png", e -> { exit(); }); // has to be redefined
+        Pickup exit = new Pickup(-1, "exit", "./res/exit.png", e -> { exit(); }); // has to be redefined
 
         do {
             exitX = rng.nextInt(mapMAX);
@@ -432,7 +433,7 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         cells[exitX][exitY].placeExit(exit);
     }
 
-    public void exit() {
+    public void exit() { // if placed in PICKUP.Exit causes it to not work, it loads level but loses exit sprite. but it still works hmm
         // zero out
         mapX = 0; mapY = 0; // reset map loc
         for (int i = 0; i < mapMAX; i++) {
@@ -457,7 +458,13 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
             loadCell(cells[mapX][mapY], true);
             refreshMap();
         } else if (curLvl == "boss") {
-            //genBoss();
+            genBoss();
+            cells[mapX][mapY].infoAdd("b");
+            createExit();
+            cells[mapX][mapY].discover();
+            player.setPos(512, 512);
+            loadCell(cells[mapX][mapY], true);
+            refreshMap();
         }
         System.out.println("loaded new level");
     }
