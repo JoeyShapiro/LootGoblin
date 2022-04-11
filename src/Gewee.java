@@ -450,6 +450,10 @@ public class Gewee extends JLayeredPane implements ActionListener{ // maybe make
         //cells = null; // does this work right
 
         // load new
+        if (levels.isEmpty()) {
+            System.out.println("YOu Wind");
+            return;
+        }
         curLvl = levels.pop();
         System.out.println(curLvl);
         if (curLvl == "dungeon") {
